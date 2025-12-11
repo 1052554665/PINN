@@ -1,2 +1,0 @@
-surf(peaks)
-axis tight
