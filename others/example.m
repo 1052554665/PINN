@@ -1,0 +1,2 @@
+surf(peaks)
+axis tight
