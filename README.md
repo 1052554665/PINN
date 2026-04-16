@@ -1,3 +1,23 @@
+# PINN-XX
+这 4 个脚本都属于同一类方案：不使用 PCNN，而是直接把灰度 Mel 图像送入 CNN 主干，再额外接一个物理场分支做 PINN 约束。它们的共同流程基本一致：数据集按 5 类读取、输入转灰度、提取特征、输出分类结果和物理场 `phys_out`、用交叉熵加拉普拉斯正则训练，并在测试时输出准确率、Precision/Recall/F1、G-Mean、标准差、t-SNE 和混淆矩阵。
+
+## 各自做了什么
+- PINN-LeNet.py 用的是 LeNet 风格的轻量卷积结构，适合做小模型基线。
+- PINN-AlexNet.py 用的是自定义 AlexNet 风格卷积堆叠，并加了 SE 注意力模块，增强通道选择能力。
+- PINN-VGGNet.py 用的是 VGG16-BN 风格的深层网络，分类器更大，结构更重。
+- PINN-ResNet.py 用的是 ResNet18 特征提取，结构更现代，残差连接更利于训练。
+
+## 主要区别
+- 结构复杂度不同：LeNet 最轻，AlexNet 次之，ResNet 和 VGG 更深，VGG 的全连接头最大。
+- 物理场是否参与分类融合不同：这 4 个文件里，LeNet、AlexNet、ResNet-phys 类似的版本会把物理场池化值拼进分类器；而 PINN-ResNet.py 和 PINN-VGGNet.py 这里是先分类、同时输出物理场，物理分支主要通过损失项约束，不是显式融合进分类头。
+- 注意力机制不同：只有 PINN-AlexNet.py 明确加了 SE 模块。
+- 数据集标签策略相同但实现上都显式固定了类别顺序，这比按目录自动排序更稳。
+- 训练和评估细节基本一致，但 PINN-ResNet.py 的测试实现最简洁，没有像 VGG/AlexNet 那样做完整的特征可视化输出细化流程。
+
+## 一句话总结
+这几个文件本质上是在做“同一任务的不同骨干网络对比实验”：  
+PINN-LeNet.py 是轻量基线，PINN-AlexNet.py 是加入 SE 的增强版，PINN-VGGNet.py 是深层大模型版，PINN-ResNet.py 是残差网络版，目的是比较不同主干在同一 PINN 约束下的分类效果。
+
 # PCNN与PCNN_1
 ## 各自实现的功能
 1. PCNN.py  
@@ -88,3 +108,17 @@ LeNet < AlexNet(SE) < VGG16/ResNet18，容量和计算量逐步上升。
 
 ## 关于 original 文件
 `PCNN-PIINN-ResNet-phys(original).py`的模型结构与 ResNet-phys 主思想一致（物理场反馈融合），但在训练参数、评估模块完整度、代码组织上更接近早期版本。可以把它看成 ResNet-phys 的原型稿。
+
+# 模型结构对比表
+
+| 文件 | 是否含 PCNN | 主干网络 | 物理场策略 | 分类头 / 特征融合 | 主要定位 |
+|---|---|---|---|---|---|
+| PCNN-PINN-LeNet.py | 是 | LeNet | phys_out 参与分类 | feat_avg 与 phys_avg 拼接后分类 | 轻量基线，完整评估 |
+| PCNN-PINN-AlexNet.py | 是 | 自定义 AlexNet + SE | phys_out 参与分类 | 物理场与主干特征融合后分类 | 中等复杂度增强版 |
+| PCNN-PINN-VGGNet.py | 是 | VGG16-BN | phys_out 参与分类 | 物理场与主干特征融合后分类 | 深层大模型版 |
+| PCNN-PINN-ResNet.py | 是 | ResNet18 | phys_out 仅作拉普拉斯正则 | 不融合 phys_out | 基础对照组 |
+| PCNN-PINN-ResNet-phys.py | 是 | ResNet18 | phys_out 参与分类 | feat_avg 与 phys_avg 拼接后分类 | ResNet 增强版，完整评估 |
+| PINN-LeNet.py | 否 | LeNet | phys_out 参与分类 | feat_avg 与 phys_avg 拼接后分类 | 无 PCNN 的轻量基线 |
+| PINN-AlexNet.py | 否 | 自定义 AlexNet + SE | phys_out 参与分类 | 物理场与主干特征融合后分类 | 无 PCNN 的增强版 |
+| PINN-VGGNet.py | 否 | VGG16-BN | phys_out 仅作拉普拉斯正则 | 不融合 phys_out | 无 PCNN 的深层对照 |
+| PINN-ResNet.py | 否 | ResNet18 | phys_out 参与分类 | feat_avg 与 phys_avg 拼接后分类 | 无 PCNN 的 ResNet 对照 |
