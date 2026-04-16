@@ -1,43 +1,38 @@
-# Transformer Acoustic Analysis: MVDR + PINN/PCNN Classification
+# PCNN与PCNN_1
+## 各自实现的功能
+1. PCNN.py  
+- 递归读取目录图片，统一缩放到 `224x224`。  
+- 先把图像转为灰度（单通道）再做 PCNN。  
+- `forward` 最终返回“最后一次迭代的二值脉冲图”（0/1）。  
+- 按原目录结构保存到新目录。  
 
-## 1. 项目简介
-本项目基于多臂螺旋麦克风阵列采集变压器声纹信号，利用 MVDR 波束形成算法抑制风扇噪声与环境干扰，并通过深度学习模型（PINN/PCNN/VGGSE）实现变压器运行状态分类。
+2. PCNN_1.py  
+- 同样递归读取与缩放。  
+- 保持 RGB，按 R/G/B 三个通道分别做 PCNN，再拼回 3 通道输出。  
+- `forward` 做“多步脉冲累计”，最后除以步数得到归一化连续图（0~1）。  
+- 同样按原目录结构保存。  
 
-## 2. 功能模块
-- MVDR 3D 波束形成（MATLAB）
-- 噪声抑制与干扰消除
-- 时频特征提取（STFT / Mel / GASF / GADF）
-- PINN/PCNN 分类网络（Python + PyTorch）
-- t-SNE 可视化、混淆矩阵、物理场可视化
+## 关键区别
+1. 输入通道处理方式不同  
+- PCNN.py：`RGB -> L` 灰度后处理。  
+- PCNN_1.py：RGB 三通道分别处理，保留颜色通道信息。  
 
-## 3. 项目结构
-transformer_acoustic_analysis/
-├── matlab_mvdr/
-├── python_nn/
-├── docs/
-├── results/
-└── README.md
+2. 输出形式不同  
+- PCNN.py：输出最后一步脉冲结果，偏“硬二值”。  
+- PCNN_1.py：输出累计脉冲强度，偏“软强度图”。  
 
+3. 参数可调性不同  
+- PCNN.py：参数固定在类内（`alpha_F=0.1, beta=0.2, VT=0.7`）。  
+- PCNN_1.py：构造函数可传参（默认 `VT=0.8`，更偏抑噪）。  
 
+4. 信息保留与计算代价  
+- PCNN.py：更轻量，适合后续单通道网络。  
+- PCNN_1.py：信息更丰富，但计算量约为前者 3 倍通道处理。  
 
-## 4. 使用流程
-1. 在 `matlab_mvdr/` 中运行 MVDR 波束形成与特征提取脚本
-2. 导出的 Mel/GASF/GADF 图像放入 `python_nn/datasets/`
-3. 运行 Python 模型训练脚本
-4. 使用可视化模块生成混淆矩阵与 t-SNE
+5. 默认数据路径不同  
+- PCNN.py：主函数里是 `data_mel_gadf_pcnn -> data_pcnn_mel_gasf`。  
+- PCNN_1.py：主函数里是 `datasets_mel_gadf -> datasets_mel_gadf_pcnn_8`。  
 
-## 5. 主要依赖
-- MATLAB R2024b
-- Python 3.9
-- PyTorch
-- NumPy, Matplotlib, Scikit-learn
-
-## 6. 实验结果
-| 方法 | 准确率 | G-Mean |
-|------|--------|--------|
-| PINN(ResNet18) | 98.4% | 97.9% |
-| PCNN+PINN | 99.1% | 98.7% |
-
-## 7. 引用
-如果你使用了本项目，请引用下方格式（示例）：
-> Author, "Transformer Acoustic Fault Diagnosis," 2025.
+## 适用范围
+后续模型是单通道输入（如改过首层的 ResNet），通常 PCNN.py 更直接；
+如果希望尽量保留颜色/纹理差异，可优先用 PCNN_1.py。
