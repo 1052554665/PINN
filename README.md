@@ -122,3 +122,75 @@ LeNet < AlexNet(SE) < VGG16/ResNet18，容量和计算量逐步上升。
 | PINN-AlexNet.py | 否 | 自定义 AlexNet + SE | phys_out 参与分类 | 物理场与主干特征融合后分类 | 无 PCNN 的增强版 |
 | PINN-VGGNet.py | 否 | VGG16-BN | phys_out 仅作拉普拉斯正则 | 不融合 phys_out | 无 PCNN 的深层对照 |
 | PINN-ResNet.py | 否 | ResNet18 | phys_out 参与分类 | feat_avg 与 phys_avg 拼接后分类 | 无 PCNN 的 ResNet 对照 |
+
+
+# Mel-GAF-X
+## 实现的功能
+1. Mel-GAF.py  
+- 最基础的单样本版本。  
+- 输入一个 wav，提取 Mel（R 通道）+ GADF（G 通道）+ 零填充 B 通道，输出一张融合 RGB 图。  
+- 适合快速验证思路，不适合直接跑大数据集。
+
+2. Mel-GAF-0.py  
+- 基于 torch/torchaudio 的版本。  
+- 先做重采样（到 44100），再提 Mel 和 GAF（这里默认是 GASF，summation），拼成 2 通道张量，再补 1 个零通道保存为 RGB。  
+- 按类别文件夹批处理（遍历 input_dir 下每个类别目录）。  
+- 更像“深度学习特征张量先行”的实现。
+
+3. Mel-GAF-1.py  
+- 基于 librosa + cv2 的批处理版本。  
+- Mel 做了 dB 限幅和 gamma 增强；GAF 可切换 GASF/GADF。  
+- R=Mel，G=GAF，B=0，直接输出 RGB（三通道但不是伪彩）。  
+- 使用 os.walk 递归遍历并保持目录结构，工程化程度较高。
+
+4. Mel-GAF-2.py  
+- 在“Mel+GAF 融合 RGB”后，再对整图做 colormap 伪彩。  
+- 伪彩是对融合图三通道均值再上色，因此会弱化原本 R/G 分通道的语义。  
+- 批处理只处理单层目录（os.listdir），不递归子目录。  
+- 你注释里“Mel 特征不明显”与这一设计是吻合的。
+
+5. Mel-GAF-3.py  
+- 与 2 的主流程接近，但增强了 Mel：dB 裁剪到 [-80,0] + gamma（0.6）。  
+- 目标是让 Mel 能量带更明显，再做伪彩。  
+- 依然是单层目录批处理，不保留多级目录结构。
+
+6. Mel-GAF-4.py  
+- 标注为 paper 版，思路最完整。  
+- 不做整图伪彩，保持融合通道可解释性：  
+- R=Mel，G=GAF，B=Mel-GAF 差异图（归一化后）。  
+- 支持递归批处理并保留目录结构。  
+- 在“可解释性 + 批量落地”上是这些版本里最均衡的一版。
+
+---
+
+## 主要不同点
+1. 输入处理链路不同  
+- Mel-GAF-0.py 用 torchaudio，含显式重采样。  
+- 其他多数用 librosa，通常 sr=None 保留原采样率，不主动统一重采样。
+
+2. GAF 类型不同  
+- Mel-GAF-0.py 默认 GASF（summation）。  
+- Mel-GAF-1.py、Mel-GAF-2.py、Mel-GAF-3.py、Mel-GAF-4.py 支持 GASF/GADF 切换。  
+- Mel-GAF.py 固定 GADF。
+
+3. 融合策略不同  
+- 简单双特征拼接：R=Mel，G=GAF，B=0（Mel-GAF.py、Mel-GAF-1.py、Mel-GAF-2.py、Mel-GAF-3.py）。  
+- 增强差异表达：B=Mel-GAF（Mel-GAF-4.py）。  
+- 张量拼接后补零通道：(Mel-GAF-0.py)。
+
+4. 是否做伪彩不同  
+- 不伪彩，保留通道语义：1、4、基础版。  
+- 伪彩后语义被压缩到单映射：2、3。
+
+5. 批处理能力不同  
+- 单文件实验：(Mel-GAF.py)。  
+- 单层批处理：(Mel-GAF-2.py、Mel-GAF-3.py)。  
+- 递归批处理并保留目录结构：(Mel-GAF-1.py、Mel-GAF-4.py)。  
+- 类别子目录遍历但非通用递归：(Mel-GAF-0.py)。
+
+---
+
+## 一句话建议
+- 如果你要“论文主线 + 可解释 + 可批处理”，优先用 Mel-GAF-4.py。  
+- 如果你要“最直观稳定的双特征融合基线”，用 Mel-GAF-1.py。  
+- Mel-GAF-2.py 和 Mel-GAF-3.py 更适合做伪彩对照实验，不建议当主数据生成脚本。
