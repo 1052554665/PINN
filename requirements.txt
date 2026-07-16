@@ -1,0 +1,28 @@
+# GTX 5090 / CUDA 12.8
+
+# Core
+numpy>=1.24
+pandas>=2.0
+PyYAML>=6.0
+tqdm>=4.66
+
+# Deep learning
+torch>=2.1
+torchvision>=0.16
+
+# Metrics and analysis
+scikit-learn>=1.3
+scipy>=1.10
+
+# Visualization
+matplotlib>=3.7
+seaborn>=0.13
+
+# Audio preprocessing (for dataset building scripts)
+librosa>=0.10
+soundfile>=0.12
+pyts>=0.13
+opencv-python>=4.8
+
+# Training monitoring
+tensorboard>=2.14

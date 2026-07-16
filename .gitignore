@@ -1,70 +1,16 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
+*.pyo
 *.egg-info/
-.installed.cfg
+dist/
+build/
 *.egg
-MANIFEST
 
-# Virtual environments
+# Virtual environment
 venv/
+.venv/
 env/
-ENV/
-.venv
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb
-
-# PyTorch
-*.pth
-*.pt
-*.ckpt
-*.pkl
-checkpoints/
-models/*.pth
-models/*.pt
-
-# TensorFlow
-*.h5
-*.pb
-logs/
-tf_events/
-*.ckpt*
-
-# MLflow
-mlruns/
-mlartifacts/
-
-# WandB
-wandb/
-
-# Data
-*.csv
-*.npy
-*.npz
-*.h5
-*.hdf5
-*.mat
-*.wav
-*.png
-data/
-datasets/
 
 # IDE
 .vscode/
@@ -73,10 +19,37 @@ datasets/
 *.swo
 *~
 
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Experiment outputs
+experiments/
+
+# Datasets (large binary files)
+datasets/
+
+# Raw data
+raw-data/
+
+# Model checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# Logs
+logs/
+*.log
+runs/
+
+# LaTeX artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+*.pdf
+
 # OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-logs/

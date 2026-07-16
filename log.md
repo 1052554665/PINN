@@ -1,3 +1,5 @@
+>Review the scripts in `PINN/scripts/` and the paper in `PINN/paper/manuscript.tex`. Reconstruct the project of `PINN` with a properly structured repository. The structure of this project can be referred to the project structure of `AW-DPCNN` in `AW-DPCNN/`.
+
 # PINN: Physics-Informed Neural Networks for Transformer Fault Diagnosis
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org/)
@@ -333,3 +335,89 @@ If you use this code in your research, please cite:
   publisher={Elsevier}
 }
 ```
+
+
+
+The PINN project has been fully reconstructed with a proper structure mirroring the AW-DPCNN reference. Here's a summary:
+
+---
+
+## Reconstruction Summary
+
+### Before (Flat Structure)
+```
+PINN/
+├── README.md
+├── log.md
+├── paper/
+│   └── manuscript.tex (+ figures)
+└── scripts/
+    ├── Mel-GAF.py, Mel-GAF-0~4.py    (5 duplicate/overlapping scripts)
+    ├── PCNN.py, PCNN_1.py            (2 PCNN scripts)
+    ├── PCNN-PINN-{AlexNet,LeNet,ResNet,VGGNet}.py  (4 training scripts)
+    ├── PCNN-PIINN-ResNet-phys(original).py
+    ├── PINN-{AlexNet,LeNet,ResNet,VGGNet}.py       (4 training scripts)
+```
+
+### After (Structured like AW-DPCNN)
+```
+PINN/
+├── README.md                    ← Comprehensive project documentation
+├── requirements.txt             ← Pinned dependencies
+├── research-log.md              ← Research tracking
+├── .gitignore                   ← Proper ignore rules
+├── configs/
+│   └── default.yaml             ← Centralized YAML config (all hyperparams)
+├── datasets/                    ← Processed image datasets
+├── experiments/                 ← Experiment outputs
+├── raw-data/                    ← Original .wav files
+├── scripts/                     ← Clean, documented CLI scripts
+│   ├── build_dataset.py         ← Mel-GADF fusion + split (consolidated)
+│   ├── apply_pcnn.py            ← PCNN batch processing
+│   ├── train.py                 ← Config-driven training
+│   ├── evaluate.py              ← Comprehensive evaluation
+│   ├── run_experiments.py       ← Ablation suite runner
+│   └── visualize.py             ← Curves & comparison plots
+├── src/                         ← Modular library
+│   ├── datasets/
+│   │   └── image_classification.py   ← DataLoader builder
+│   ├── models/
+│   │   ├── pcnn.py                   ← PCNN layer (configurable)
+│   │   ├── se_block.py               ← SE attention module
+│   │   ├── pinn_alexnet.py           ← AlexNet-SE + PINN
+│   │   ├── pinn_resnet.py            ← ResNet-18 + PINN
+│   │   ├── pinn_lenet.py             ← LeNet-5 + PINN
+│   │   ├── pinn_vggnet.py            ← VGG16-BN + PINN
+│   │   └── pinn_convnext.py          ← ConvNeXt-Tiny + PINN
+│   ├── trainers/
+│   │   └── workflow.py               ← Full training pipeline
+│   └── utils/
+│       ├── config.py                 ← YAML loading/merging
+│       ├── metrics.py                ← Accuracy, F1, G-Mean, AUC, Kappa
+│       ├── laplacian.py              ← Physics loss (Laplacian regularization)
+│       ├── train_eval.py             ← Mixed-precision training loops
+│       ├── experiment.py             ← Seed & device utilities
+│       ├── plot_confusion.py         ← Confusion matrix generation
+│       └── tsne.py                   ← t-SNE visualization
+└── data-optimization/
+    ├── __init__.py                   ← Gamma correction, GAF generation
+    └── noise_robustness.py           ← Noise injection utilities
+```
+
+### Key Improvements
+
+| Aspect | Before | After |
+|---|---|---|
+| **Code organization** | 17 flat scripts with duplicated code | Modular src library with clean separation |
+| **Configuration** | Hardcoded hyperparameters in each script | Centralized default.yaml + CLI overrides |
+| **Model registry** | Separate scripts per architecture | Single `build_model()` factory with registry |
+| **Training** | Ad-hoc loops per script | Unified `train_and_evaluate()` workflow |
+| **Evaluation** | Scattered print statements | Standardized metrics: Acc, Prec, Rec, F1, G-Mean, AUC, Kappa |
+| **Reproducibility** | No seed control | `set_seed()` + config-driven runs |
+| **Dataset pipeline** | Mixed in scripts | `build_dataset.py` (fusion) → `apply_pcnn.py` (enhance) → `train.py` |
+| **Ablation support** | Manual | `run_experiments.py` with pre-defined experiment matrix |
+| **Documentation** | Minimal README | Full README with mermaid diagrams, usage examples, model table |
+
+The old scripts are preserved in scripts (the original `Mel-GAF*.py`, `PCNN*.py`, `PCNN-PINN-*.py`, `PINN-*.py` files) for reference.
+
+Made changes.

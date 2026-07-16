@@ -1,0 +1,70 @@
+# =============================================================================
+# PINN: Physics-Informed Neural Networks for Transformer Fault Diagnosis
+# =============================================================================
+# Default configuration file.
+# Override with experiment-specific YAML for individual runs.
+# =============================================================================
+
+experiment_name: baseline
+seed: 42
+device: auto
+
+# ---------------------------------------------------------------------------
+# Dataset configuration
+# ---------------------------------------------------------------------------
+dataset:
+  root_dir: ./datasets/mel_gadf_pcnn          # root containing train/val/test splits
+  train_split: train
+  val_split: val
+  test_split: test
+  img_size: 224
+  batch_size: 32
+  num_workers: 4
+  augmentation: false                          # disable for spectrogram images
+  pin_memory: true
+  normalize_mean: [0.5]                        # grayscale normalization
+  normalize_std: [0.5]
+
+# ---------------------------------------------------------------------------
+# Model configuration
+# ---------------------------------------------------------------------------
+model:
+  name: alexnet                                # alexnet | resnet | lenet | vgg | convnext
+  num_classes: 5
+  in_channels: 1                               # 1 for grayscale, 3 for RGB
+  use_pcnn: true                               # enable PCNN preprocessing layer
+  pcnn_steps: 10                               # number of PCNN iterations
+  lambda_phy: 0.1                              # weight for Laplacian physics loss
+  pretrained: false                            # ImageNet pretrained weights
+
+# ---------------------------------------------------------------------------
+# Training configuration
+# ---------------------------------------------------------------------------
+train:
+  epochs: 30
+  optimizer: sgd                               # sgd | adam | adamw
+  lr: 0.01
+  weight_decay: 0.0001
+  momentum: 0.9
+  class_weighting: false
+  print_freq: 1
+  early_stopping:
+    enabled: true
+    patience: 10
+    metric: val_f1                             # val_f1 | val_loss
+
+# ---------------------------------------------------------------------------
+# Learning rate scheduler
+# ---------------------------------------------------------------------------
+scheduler:
+  type: plateau                                # plateau | step | cosine | none
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+# ---------------------------------------------------------------------------
+# Output paths
+# ---------------------------------------------------------------------------
+output:
+  root_dir: ./experiments/exp1
