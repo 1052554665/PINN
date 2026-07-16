@@ -1,4 +1,6 @@
 # PINN-XX
+Note: This project are pending for refactoring.
+
 这 4 个脚本都属于同一类方案：不使用 PCNN，而是直接把灰度 Mel 图像送入 CNN 主干，再额外接一个物理场分支做 PINN 约束。它们的共同流程基本一致：数据集按 5 类读取、输入转灰度、提取特征、输出分类结果和物理场 `phys_out`、用交叉熵加拉普拉斯正则训练，并在测试时输出准确率、Precision/Recall/F1、G-Mean、标准差、t-SNE 和混淆矩阵。
 
 ## 各自做了什么
