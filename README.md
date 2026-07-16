@@ -1,5 +1,125 @@
-# PINN-XX
-Note: This project are pending for refactoring.
+# Voiceprint Diagnosis Method for Transformer Faults Based on Mel-GADF-PCNN and Improved Physics-Informed Neural Networks
+
+> **Status**: Pending for refactoring.
+
+---
+
+## 1. Problem
+
+Power transformers are critical to power system reliability. Accurate and timely fault diagnosis is essential to prevent catastrophic failures and ensure grid stability. However, existing voiceprint-based diagnostic methods face three key challenges:
+
+| Challenge | Description |
+|---|---|
+| **Single-feature limitation** | Conventional approaches rely on a single spectrogram representation (e.g., Mel only, STFT only), which cannot fully exploit the rich fault-related information embedded in acoustic signals. |
+| **Low-frequency feature loss** | Mel spectrograms, though perceptually aligned with human hearing, suffer from diminished feature saliency in low-frequency regions after channel-wise RGB fusion. |
+| **Data scarcity & noise** | Pure data-driven deep learning models require large labeled datasets and degrade under noisy, real-world acoustic conditions. Physical consistency is rarely enforced. |
+
+---
+
+## 2. Method
+
+We propose a **multimodal, physics-informed pipeline** for transformer voiceprint fault diagnosis with five stages:
+
+```mermaid
+flowchart LR
+    A[Raw Acoustic Signal<br/>1s @ 44.1kHz] --> B[Mel + GADF<br/>Feature Fusion]
+    B --> C[Gamma Correction<br/>γ = 1.7]
+    C --> D[PCNN Enhancement<br/>VT = 0.8]
+    D --> E[PINN + AlexNet-SE<br/>Classification]
+    E --> F[Fault Diagnosis<br/>5 Classes]
+```
+
+### 2.1 Feature Fusion: Mel-GADF
+- **R channel**: Mel spectrogram energy (time-frequency representation).
+- **G channel**: Gramian Angular Difference Field (GADF) — captures temporal correlations and phase-based texture.
+- **B channel**: Pixel-wise difference between Mel and GADF, encoding complementary information.
+
+> Mel-GADF outperforms Mel-GASF (summation field) on all metrics, with better class-wise balance (G-Mean: 0.9587 vs 0.8503).
+
+### 2.2 Gamma Correction
+- Applied uniformly with $\gamma = 1.7$ to enhance dark, low-energy regions of the Mel channel.
+- Improves feature visibility and texture contrast for downstream learning.
+
+### 2.3 PCNN (Pulse-Coupled Neural Network)
+- Biologically-inspired spiking model applied **per RGB channel**.
+- Suppresses background noise while preserving fine discriminative textures.
+- Initial threshold $V_T = 0.8$ selected for optimal noise–detail trade-off.
+
+### 2.4 Improved PINN with AlexNet-SE Backbone
+- **Physical prior**: Laplacian smoothness $\Delta u(x,y) \approx 0$ (heat-diffusion-inspired).
+- **Architecture**: Custom AlexNet with:
+  - Smaller convolution kernels (5×5, 3×3)
+  - Batch Normalization + ReLU after every conv layer
+  - **Squeeze-and-Excitation (SE)** channel attention
+  - 1×1 Phys_Out layer for physical field feedback
+  - Physical field pooled and concatenated into the classifier head
+- **Loss**: $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda \mathcal{L}_{\text{Laplacian}}$
+- **Four backbones compared**: LeNet, ResNet-18, ConvNeXt, AlexNet-SE
+
+![Overall framework](Measurement/drawing/pinn-alexnet/pinn-alexnet.pdf)
+
+---
+
+## 3. Key Results
+
+### 3.1 Ablation: Feature Type & PCNN
+
+| Feature | Model | Accuracy | Precision | F₁ | G-Mean |
+|---|---|---|---|---|---|
+| Mel-GADF | AlexNet-SE | 93.94% | 94.18% | 0.9392 | 0.9587 |
+| Mel-GASF | AlexNet-SE | 92.42% | 93.73% | 0.9132 | 0.8503 |
+| **Mel-GADF-PCNN** | **AlexNet-SE** | **96.97%** | **97.20%** | **0.9684** | 0.9510 |
+| Mel-GASF-PCNN | AlexNet-SE | 96.97% | 97.22% | 0.9693 | **0.9736** |
+
+> PCNN consistently boosts accuracy by ~3–4% and substantially reduces per-class variance.
+
+### 3.2 Backbone Comparison (Mel-GADF-PCNN + PINN)
+
+| Model | Accuracy | Precision | F₁ | G-Mean | σ_F₁ ↓ |
+|---|---|---|---|---|---|
+| PINN + LeNet | 72.24% | 83.08% | 0.6718 | 0.5635 | 0.3226 |
+| PINN + ResNet | 95.45% | 96.17% | 0.9548 | 0.9711 | 0.0391 |
+| PINN + ConvNeXt | 95.45% | 96.00% | 0.9536 | 0.9593 | 0.0428 |
+| **PINN + AlexNet-SE** | **98.48%** | **98.57%** | **0.9849** | **0.9907** | **0.0133** |
+
+> **AlexNet-SE + PINN achieves the best overall performance**, with near-perfect G-Mean (0.9907) and the lowest variance across classes.
+
+### 3.3 Key Figures
+
+| Figure | Description | Path |
+|---|---|---|
+| Overall framework | Full pipeline from signal to diagnosis | `Measurement/drawing/pinn-alexnet/pinn-alexnet.pdf` |
+| Loss curves | Mel-GADF-PCNN vs Mel-GASF-PCNN training | `Measurement/curve/compare_loss_curve2.pdf` |
+| Confusion matrices | 4-classifier comparison (LeNet/ResNet/ConvNeXt/AlexNet-SE) | `Measurement/confusion/confusion_matrix1–4.pdf` |
+| Feature visualization | Mel / Mel-GASF / Mel-GADF across 5 fault types | `Measurement/MEL-GASF/`, `Measurement/MEL-GADF/`, `Measurement/MEL/` |
+| PCNN threshold study | Effect of VT = 0.4, 0.6, 0.8 on feature maps | `Measurement/VT/` |
+
+### 3.4 Dataset Summary
+
+| Class | Label | Samples |
+|---|---|---|
+| Normal | N0 | 185 |
+| Short-circuit impact | N1 | 119 |
+| DC-bias | N2 | 119 |
+| Mechanical looseness | N3 | 119 |
+| Partial discharge | N4 | 119 |
+| **Total** | | **661** (Train/Val/Test = 80/10/10) |
+
+---
+
+## 4. Conclusion
+
+The proposed **Mel-GADF-PCNN + PINN-AlexNet-SE** pipeline advances transformer voiceprint fault diagnosis by:
+1. Fusing complementary time-frequency representations (Mel + GADF) for richer feature extraction.
+2. Applying PCNN to enhance discriminability while suppressing noise.
+3. Embedding a Laplacian physical prior via PINN to improve robustness under limited/noisy data.
+4. Achieving **98.48% test accuracy** with excellent class-wise balance (G-Mean = 0.9907), significantly outperforming single-feature and non-physics baselines.
+
+---
+
+## 5. Codebase Overview
+
+> ⚠️ Note: This project is pending for refactoring. The scripts below represent experimental variants used during development.
 
 这 4 个脚本都属于同一类方案：不使用 PCNN，而是直接把灰度 Mel 图像送入 CNN 主干，再额外接一个物理场分支做 PINN 约束。它们的共同流程基本一致：数据集按 5 类读取、输入转灰度、提取特征、输出分类结果和物理场 `phys_out`、用交叉熵加拉普拉斯正则训练，并在测试时输出准确率、Precision/Recall/F1、G-Mean、标准差、t-SNE 和混淆矩阵。
 
