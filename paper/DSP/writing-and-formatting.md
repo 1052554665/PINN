@@ -53,3 +53,117 @@ The graphical abstract summarizes the contents of your article in a concise, pic
 - Preferred file types for graphical abstracts are TIFF, EPS, PDF or MS Office files.
 
 # Math formulae
+- Submit math equations as editable text, not as images.
+
+- Present simple formulae in line with normal text, where possible.
+
+- Use the solidus (/) instead of a horizontal line for small fractional terms such as X/Y.
+
+- Present variables in italics.
+
+- Denote powers of e by exp.
+
+- Display equations separately from your text, numbering them consecutively in the order they are referred to within your text.
+
+# Table 
+Tables must be submitted as editable text, not as images. Some guidelines:
+
+- Place tables next to the relevant text or on a separate page(s) at the end of your article.
+
+- Cite all tables in the manuscript text.
+
+- Number tables consecutively according to their appearance in the text.
+
+- Please provide captions along with the tables.
+
+- Place any table notes below the table body.
+
+- Avoid vertical rules and shading within table cells.
+
+We recommend that you use tables sparingly, ensuring that any data presented in tables is not duplicating results described elsewhere in the article.
+
+# Figures, images and artwork
+Figures, images, diagrams and other graphical media (artwork) must be supplied as separate files along with the manuscript, in line with these artwork and media instructions. Some excerpts:
+
+When submitting artwork:
+
+- Cite all images in the manuscript text.
+
+- Number images according to the order they appear within your article.
+
+- Submit each image as a separate file using a logical naming convention for your files (for example, Figure_1, Figure_2 etc).
+
+- Text graphics may be embedded in the text at the appropriate position. If you are working with LaTeX, text graphics may also be embedded in the file.
+
+# Captions
+All artwork must have a caption. A caption should consist of a brief title (not displayed on the figure itself) and a description of the image. Keep the amount of text in any image to a minimum, though any symbol or abbreviation should be explained.
+
+
+
+# Article structure
+## Article sections
+- Divide your manuscript into clearly defined and numbered sections. Number subsections 1.1 (then 1.1.1, 1.1.2, ...), then 1.2, etc.
+
+- Use the numbering format when cross-referencing within your article. Do not just refer to "the text."
+
+- You may give subsections a brief heading. Headings should appear on a separate line.
+
+- Do not include the article abstract within section numbering.
+
+## Theory and calculation
+The theory section should lay the foundation for further work by extending the background you provided in the introduction to your article. The calculation section should represent a practical development from a theoretical basis.
+
+## Acknowledgements
+Include any individuals who provided you with help during your research, such as help with language, writing or proof reading, in the acknowledgements section.
+
+Acknowledgements should be placed in a separate section which appears directly before the reference list. Do not include acknowledgements on your title page, as a footnote to your title, or anywhere else in your article other than in the separate acknowledgements section.
+
+## Author contributions: CRediT
+Corresponding authors are encouraged to acknowledge co-author contributions using CRediT (Contributor Roles Taxonomy) roles:
+
+- Conceptualization
+
+- Data curation
+
+- Formal analysis
+
+- Funding acquisition
+
+- Investigation
+
+- Methodology
+
+- Project administration
+
+- Resources
+
+- Software
+
+- Supervision
+
+- Validation
+
+- Visualization
+
+- Writing – original draft
+
+- Writing – review and editing
+
+Not all CRediT roles will apply to every manuscript and some authors may contribute through multiple roles.
+
+
+# References
+## References within text
+Any references cited within your article should also be present in your reference list and vice versa. Some guidelines:
+
+- References cited in your abstract must be given in full.
+
+- We recommend that you do not include unpublished results and personal communications in your reference list, though you may mention them in the text of your article.
+
+- Any unpublished results and personal communications included in your reference list must follow the standard reference style of the journal. In substitution of the publication date add "unpublished results" or "personal communication."
+
+- References cited as "in press" imply that the item has been accepted for publication.
+
+Linking to cited sources will increase the discoverability of your research. We encourage the use of Digital Object Identifiers (DOIs) as reference links, as they provide a permanent link to the electronic article referenced.
+
+Before submission, check that all data provided in your reference list are correct, including any references which have been copied. Providing correct reference data allows us to link to abstracting and indexing services such as Scopus, Crossref and PubMed. Any incorrect surnames, journal or book titles, publication years or pagination within your references may prevent link creation.
