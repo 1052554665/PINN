@@ -1,4 +1,6 @@
-\documentclass[final,5p,times,twocolumn]{elsarticle}
+\documentclass[a4paper,fleqn]{cas-dc}
+
+%%% Packages
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{subcaption} 
@@ -8,34 +10,58 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{bm}
-\journal{Measurement}
+
+%%% Citation style — numeric, sorted & compressed
+\usepackage[numbers,sort&compress]{natbib}
 
 \begin{document}
-\begin{frontmatter}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
 
-\title{Acoustic Fault Diagnosis of Power Transformers via Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
+% ======================================================================
+% Frontmatter
+% ======================================================================
 
-%\author{Chen Yang}
-%\author{Zonglong Bai\corref{cor1}}
-%\cortext[cor1]{corresponding author}
-%\author{Chenggang Liu}
-%\author{Junyan Zhang}
-%\author{Yihe Guo}
+\title[mode=title]{Acoustic Fault Diagnosis of Power Transformers via Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
 
-%\affiliation{organization={North China Electric Power University},
-%            city={Baoding},
-%            postcode={071003}, 
-%            country={China}}
+%\tnotemark[1]
+%\tnotetext[1]{}
+
+%%% Authors (uncomment and fill in for submission) ----------------------
+% \author[1]{Chen Yang}
+% \author[1]{Zonglong Bai}[orcid=0000-0000-0000-0000]
+% \cormark[1]
+% \ead{bai_zonglong@example.com}
+% \author[1]{Chenggang Liu}
+% \author[1]{Junyan Zhang}
+% \author[1]{Yihe Guo}
+% 
+% \affiliation[1]{organization={North China Electric Power University},
+%             addressline={},
+%             city={Baoding},
+%             postcode={071003},
+%             state={},
+%             country={China}}
+
+% ======================================================================
+% Abstract & Keywords
+% ======================================================================
 
 
 \begin{abstract}
 Accurate fault diagnosis of power transformers is critical for ensuring the reliability and safety of electrical power systems. While acoustic-based diagnosis offers advantages in non-contact measurement and low sensor cost, existing approaches face three key challenges: (i) reliance on single-modality representations that capture only partial fault signatures, (ii) sensitivity to background noise that degrades classification performance in real-world substation environments, and (iii) difficulty in generalizing from limited labeled data. To address these challenges, this paper proposes a multi-modal feature fusion framework that integrates Mel spectrograms with Gramian Angular Difference Fields (GADF) to construct complementary time--frequency representations. A Pulse-Coupled Neural Network (PCNN) is employed as a biologically inspired front-end to suppress noise and enhance discriminative structures through synchronized neuronal firing. Crucially, a physics-informed regularization strategy is introduced, grounded in the acoustic wave propagation physics of power transformers. Specifically, the steady-state acoustic pressure field within the transformer tank approximately satisfies the Helmholtz equation, which in homogeneous media reduces to the Laplace equation $\nabla^2 p \approx 0$ in source-free regions. This physical prior is encoded as a Laplacian smoothness constraint on the network's internal feature representations, guiding the model to distinguish physically plausible fault-induced irregularities from unstructured noise. The proposed method is evaluated on a real-world transformer acoustic dataset comprising five operational conditions, with data partitioned by independent recording sessions to prevent information leakage. Extensive experiments---including component-wise ablation studies, five-fold cross-validation, hyperparameter sensitivity analysis, and noise robustness tests---demonstrate that the proposed framework achieves state-of-the-art classification accuracy while maintaining robust performance under low signal-to-noise ratio conditions. Comparisons with seven representative methods, including Vision Transformer (ViT), EfficientNet, Swin Transformer, ConvNeXt, and end-to-end 1D-CNN, further validate the effectiveness and generalizability of the proposed approach.
 \end{abstract}
 
-\begin{keyword}Transformer fault diagnosis \sep Mel spectrogram \sep Gramian Angular Difference Field \sep Pulse-Coupled Neural Network \sep Physics-informed representation learning \sep Acoustic signal processing.
-\end{keyword}
+\begin{keywords}
+Transformer fault diagnosis \sep Mel spectrogram \sep Gramian Angular Difference Field \sep Pulse-Coupled Neural Network \sep Physics-informed representation learning \sep Acoustic signal processing
+\end{keywords}
 
-\end{frontmatter}
+\maketitle
+
+% ======================================================================
+% Main Text
+% ======================================================================
 
 
 \section{Introduction}
@@ -188,7 +214,7 @@ Gamma correction is defined as \cite{8362729}:
 \end{equation}
 \noindent where $I_{\text{in}}, I_{\text{out}} \in [0, 1]$ are the normalized input and output pixel intensities, respectively. The parameter $c$ is a linear scaling coefficient and $\gamma$ is the gamma exponent that controls the degree of non-linear mapping. When $c = 1$, the mapping reduces to a pure power-law transformation. For $\gamma > 1$, the transformation expands the dynamic range of dark regions (low $I_{\text{in}}$) while compressing bright regions (high $I_{\text{in}}$), thereby enhancing contrast in low-intensity areas. The parameter $c \neq 1$ shifts the overall intensity level uniformly and is set to $c = 1$ in this work, as the subsequent PCNN processing provides adaptive intensity normalization. However, in scenarios where a global brightness offset is required—for instance, when compensating for systematic sensor gain variations—$c$ can be tuned accordingly.
 
-The selection of $\gamma = 1.7$ was determined through systematic hyperparameter optimization, where the macro-averaged $F_1$ score was evaluated for $\gamma \in \{0.5, 0.8, 1.0, 1.3, 1.5, 1.7, 2.0, 2.5, 3.0\}$ (see Section~5.4 for detailed sensitivity analysis). Values of $\gamma < 1.5$ provided insufficient contrast enhancement in low-energy regions, while $\gamma > 2.0$ led to over-saturation and loss of texture detail in high-energy regions. The optimal value $\gamma = 1.7$ achieves the best trade-off, enhancing the visibility of low-energy spectral features without distorting the overall energy distribution.
+The selection of $\gamma = 1.7$ was determined through systematic hyperparameter optimization over a grid spanning $\gamma = 0.5$ to $3.0$ (see Section~5.4 for detailed sensitivity analysis). Values of $\gamma < 1.5$ provided insufficient contrast enhancement in low-energy regions, while $\gamma > 2.0$ led to over-saturation and loss of texture detail in high-energy regions. The optimal value $\gamma = 1.7$ achieves the best trade-off, enhancing the visibility of low-energy spectral features without distorting the overall energy distribution.
 
 \subsection{Bicubic Interpolation}
 Image resizing is required to ensure dimensional consistency between the Mel spectrogram and GADF representations before fusion. Bicubic interpolation was selected over nearest-neighbor and bilinear methods due to its superior preservation of fine texture and edge structures, which are critical for fault feature discrimination \cite{9257189}. Given a source image $\bm{I}$, the interpolated pixel value at target coordinate $(x, y)$ is computed as a weighted sum over a $4 \times 4$ neighborhood of the source:
@@ -672,6 +698,13 @@ We benchmark against seven representative methods (Table~\ref{tab7}) under ident
 
 Key findings: (i) The end-to-end 1D-CNN ($87.14\%$) underperforms spectrogram-based methods, confirming that time--frequency representations provide valuable inductive bias for acoustic diagnosis. (ii) Among modern architectures, Swin-T achieves the best competitor performance ($95.82\%$). (iii) The proposed method outperforms Swin-T by $+1.44$ pp in accuracy ($p = 0.003$, paired $t$-test), demonstrating that PCNN + PINN provides benefits beyond architectural innovation alone.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=1.0\linewidth]{drawing/fault-diagnosis/structure}
+	\caption{Structure of the fault diagnosis module.}
+	\label{fig10}
+\end{figure}
+
 \subsection{Experiment 5: Hyperparameter Sensitivity Analysis}
 A systematic sensitivity analysis evaluated five key hyperparameters: gamma correction $\gamma$, PINN weight $\lambda_{\text{phy}}$, PCNN threshold $V_T$, PCNN iterations $N$, and learning rate. The macro $F_1$-score was evaluated across a grid of values using three-fold cross-validation. Key findings: $\gamma = 1.7$ provides optimal low-energy enhancement without over-saturation; $\lambda_{\text{phy}} = 0.1$ achieves the best data--physics balance (setting $\lambda_{\text{phy}} = 0$ yields $F_1 = 0.9608$, confirming the non-trivial benefit of the physical constraint); $V_T = 0.8$ balances noise suppression and feature preservation; $N = 10$ saturates performance with minimal computational overhead.
 
@@ -696,14 +729,7 @@ Through comprehensive experiments---including component-wise ablation, five-fold
 
 Future research directions include: (i) extending the framework to multi-site transformer deployments with domain adaptation techniques; (ii) incorporating higher-order acoustic physics constraints such as the full Helmholtz equation with impedance boundary conditions; (iii) exploring lightweight model variants for edge deployment on substation monitoring hardware; and (iv) validating the method on additional fault types and combined fault scenarios.
 
-\begin{figure}
-	\centering
-	\includegraphics[width=1.0\linewidth]{drawing/fault-diagnosis/structure}
-	\caption{Structure of the fault diagnosis module.}
-	\label{fig10}
-\end{figure}
-
-  \bibliographystyle{elsarticle-num-names} 
+  \bibliographystyle{elsarticle-num-names}
   \bibliography{references}
 
 \end{document}
