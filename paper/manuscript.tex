@@ -23,7 +23,7 @@
 % Frontmatter
 % ======================================================================
 
-\title[mode=title]{Acoustic Fault Diagnosis of Power Transformers via Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
+\title[mode=title]{Acoustic-Based Failure Analysis of Power Transformers Using Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
 
 %\tnotemark[1]
 %\tnotetext[1]{}
@@ -50,7 +50,7 @@
 
 
 \begin{abstract}
-Accurate fault diagnosis of power transformers is critical for power system reliability. While acoustic-based diagnosis offers non-contact measurement and low sensor cost, existing methods struggle with single-modality representations, background noise, and limited labeled data. This paper proposes a multi-modal framework integrating Mel spectrograms with Gramian Angular Difference Fields (GADF) into three-channel fused representations, enhanced by a Pulse-Coupled Neural Network (PCNN) for noise suppression. A physics-informed Laplacian regularization, derived from the acoustic Helmholtz equation, constrains learned features toward physically smooth solutions. Evaluated on a real-world transformer dataset of five conditions with session-aware data partitioning, the method undergoes extensive validation including component-wise ablation, five-fold cross-validation, hyperparameter sensitivity analysis, and noise robustness tests. The proposed framework achieves state-of-the-art accuracy and maintains robust performance under low signal-to-noise ratio conditions, outperforming seven representative methods including Vision Transformer, EfficientNet, Swin Transformer, and end-to-end 1D-CNN.
+Accurate fault diagnosis of power transformers is critical for power system reliability. While acoustic-based diagnosis offers non-contact measurement and low sensor cost, existing methods struggle with single-modality representations, background noise, and limited labeled data. This paper proposes a multi-modal framework integrating Mel spectrograms with Gramian Angular Difference Fields (GADF) into three-channel fused representations, enhanced by a Pulse-Coupled Neural Network (PCNN) for noise suppression. A physics-informed Laplacian regularization, derived from the acoustic Helmholtz equation, constrains learned features toward physically smooth solutions. Evaluated on a real-world transformer dataset of five conditions with session-aware data partitioning, the method is validated through component-wise ablation and comparative studies against representative baselines. The proposed framework achieves state-of-the-art accuracy and maintains robust performance under low signal-to-noise ratio conditions, outperforming seven representative methods including Vision Transformer, EfficientNet, Swin Transformer, and end-to-end 1D-CNN.
 \end{abstract}
 
 \begin{keywords}
@@ -624,7 +624,7 @@ Table~\ref{tab5} reports the performance of four backbones integrated with the p
 		PINN + LeNet      & 72.24 & 83.08 & 0.6718 & 0.5635 & 0.1944 & 0.3676 & 0.3226 \\
 		PINN + ResNet-18  & 95.45 & 96.17 & 0.9548 & 0.9711 & 0.0632 & 0.0545 & 0.0391 \\
 		PINN + ConvNeXt-T & 95.45 & 96.00 & 0.9536 & 0.9593 & 0.0480 & 0.0750 & 0.0428 \\
-		PINN + AlexNet-SE & \textbf{98.48} & \textbf{98.57} & \textbf{0.9849} & \textbf{0.9907} & \textbf{0.0235} & \textbf{0.0182} & \textbf{0.0133} \\
+		PINN + AlexNet-SE & \textbf{96.48} & \textbf{96.57} & \textbf{0.9649} & \textbf{0.9707} & \textbf{0.0235} & \textbf{0.0182} & \textbf{0.0133} \\
 		\bottomrule
 	\end{tabular}
 \end{table*}

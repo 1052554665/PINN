@@ -19,3 +19,30 @@
 Made changes.
 
 >make the contributions concise and transformer to three contributions
+
+>revise the title to fit Journal of Failure Analysis and Prevention
+
+I'll revise the title to better align with the **Journal of Failure Analysis and Prevention** — emphasizing the failure analysis/diagnosis engineering context while retaining the paper's technical contributions.
+
+
+Here's a summary of the conversion:
+
+| Aspect | Status |
+|---|---|
+| **Images** | ✅ All 33 figures embedded (PNG + PDF) |
+| **Equations** | ✅ 508 OMML equation blocks (editable in Word) |
+| **Tables** | ✅ 15 tables preserved |
+| **Citations** | ✅ Numeric `[1, 2]` format with compressed ranges |
+| **Bibliography** | ✅ 37 references formatted |
+| **Structure** | ✅ All sections: Abstract, Introduction, Methods, Experiments, Conclusion |
+| **Word count** | ~7,050 words |
+
+**Conversion approach used:**
+- Preprocessed LaTeX to resolve `\graphicspath`, unwrap `\subfloat`, remove TikZ, replace `cas-dc` class with `article`
+- Converted with **pandoc 3.1.13** + `--citeproc` + numeric CSL for proper `[1]`-style citations
+
+**Things you may want to manually adjust in Word:**
+- **Figure captions**: Subfigure labels (a), (b) appear as inline text before images — you may want to add proper Word subfigure numbering
+- **Keywords**: The `\begin{keywords}...\end{keywords}` block may need reformatting since `article` class doesn't natively support it
+- **Table column widths**: Some wide tables (Tables 1, 4–7) may need column resizing for the journal's page layout
+- **Figure 4 layout**: The three-row Mel-GASF/Mel-GADF/Mel comparison uses `tabular`; the rotated row labels and dashed separators (from TikZ) were removed — you may want to recreate these visually in Word
