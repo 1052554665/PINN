@@ -1,61 +1,49 @@
-\documentclass[a4paper,fleqn]{cas-dc}
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
 
-%%% Packages
-\usepackage{amssymb}
-\usepackage{amsmath}
+%%%% Standard Packages
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{xcolor}
+%%<additional latex packages if required can be included here>
 \usepackage{subcaption} 
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
 \usetikzlibrary{positioning, shapes.geometric, decorations.pathreplacing, calc}
-\usepackage{booktabs}
-\usepackage{multirow}
 \usepackage{bm}
 
-%%% Citation style — numeric, sorted & compressed
-\usepackage[numbers,sort&compress]{natbib}
-
 \begin{document}
-\let\WriteBookmarks\relax
-\def\floatpagepagefraction{1}
-\def\textpagefraction{.001}
 
 % ======================================================================
 % Frontmatter
 % ======================================================================
 
-\title[mode=title]{Acoustic-Based Failure Analysis of Power Transformers Using Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
+% \title[Acoustic-Based Failure Analysis]{Acoustic-Based Failure Analysis of Power Transformers Using Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
 
-%\tnotemark[1]
-%\tnotetext[1]{}
+\title[PCNN-Enhanced Multi-Modal Acoustic Fault Diagnosis]{PCNN-Enhanced Multi-Representation Fusion with Physics-Informed Learning for Power Transformer Fault Diagnosis}
 
-%%% Authors (uncomment and fill in for submission) ----------------------
-% \author[1]{Chen Yang}
-% \author[1]{Zonglong Bai}[orcid=0000-0000-0000-0000]
-% \cormark[1]
-% \ead{bai_zonglong@example.com}
-% \author[1]{Chenggang Liu}
-% \author[1]{Junyan Zhang}
-% \author[1]{Yihe Guo}
-% 
-% \affiliation[1]{organization={North China Electric Power University},
-%             addressline={},
-%             city={Baoding},
-%             postcode={071003},
-%             state={},
-%             country={China}}
+%% Authors -------------------------------------------------------------
+\author[1]{\fnm{Chen} \sur{Yang}}\email{220242215063@ncepu.edu.cn}
+\author*[1,2,3]{\fnm{Zonglong} \sur{Bai}}\email{zlbai@ncepu.edu.cn}
+\author[1]{\fnm{Zhiyuan} \sur{Xie}}
+\author[1]{\fnm{Chenggang} \sur{Liu}}
+\author[1]{\fnm{Junyan} \sur{Zhang}}
+\affil[1]{\orgdiv{Department of Electrical Engineering}, \orgname{North China Electric Power University}, \orgaddress{\city{Baoding}, \postcode{071003}, \country{China}}}
+
+\affil[2]{\orgname{Yanzhao Electric Power Laboratory}, \orgaddress{\street{Lixing Street 666}, \city{Baoding}, \postcode{071000}, \state{Hebei}, \country{China}}}
+
+\affil[3]{\orgname{Hebei Key Laboratory of Power Internet of Things Technology}, \orgaddress{\street{Yonghuabei Street 619}, \city{Baoding}, \postcode{071003}, \state{Hebei}, \country{China}}}
+
 
 % ======================================================================
 % Abstract & Keywords
 % ======================================================================
 
 
-\begin{abstract}
-Accurate fault diagnosis of power transformers is critical for power system reliability. While acoustic-based diagnosis offers non-contact measurement and low sensor cost, existing methods struggle with single-modality representations, background noise, and limited labeled data. This paper proposes a multi-modal framework integrating Mel spectrograms with Gramian Angular Difference Fields (GADF) into three-channel fused representations, enhanced by a Pulse-Coupled Neural Network (PCNN) for noise suppression. A physics-informed Laplacian regularization, derived from the acoustic Helmholtz equation, constrains learned features toward physically smooth solutions. Evaluated on a real-world transformer dataset of five conditions with session-aware data partitioning, the method is validated through component-wise ablation and comparative studies against representative baselines. The proposed framework achieves state-of-the-art accuracy and outperforms seven representative methods including Vision Transformer, EfficientNet, Swin Transformer, and end-to-end 1D-CNN.
-\end{abstract}
+\abstract{Accurate fault diagnosis of power transformers is critical for power system reliability. While acoustic-based diagnosis offers non-contact measurement and low sensor cost, existing methods struggle with single-modality representations, background noise, and limited labeled data. This paper proposes a multi-modal framework integrating Mel spectrograms with Gramian angular difference Fields (GADF) into three-channel fused representations, enhanced by a pulse-coupled neural network (PCNN) for noise suppression. A physics-informed Laplacian regularization, derived from the acoustic Helmholtz equation, constrains learned features toward physically smooth solutions. Evaluated on a real-world transformer dataset of five conditions with session-aware data partitioning, the method is validated through component-wise ablation and comparative studies against representative baselines. The proposed framework achieves state-of-the-art accuracy and outperforms seven representative methods including Vision Transformer, EfficientNet, Swin Transformer, and end-to-end 1D-CNN.}
 
-\begin{keywords}
-Transformer fault diagnosis \sep Mel spectrogram \sep Gramian Angular Difference Field \sep Pulse-Coupled Neural Network \sep Physics-informed representation learning \sep Acoustic signal processing
-\end{keywords}
+\keywords{Transformer fault diagnosis, Mel spectrogram, Gramian angular difference field (GADF), pulse-coupled neural network, physics-informed representation learning, acoustic signal processing}
 
 \maketitle
 
@@ -65,15 +53,15 @@ Transformer fault diagnosis \sep Mel spectrogram \sep Gramian Angular Difference
 
 
 \section{Introduction}
-Power transformers are critical assets in modern electrical power systems, and the continuous monitoring of their operational condition is essential for maintaining grid safety, reliability, and stability \cite{HE2026119781,10492658}. Among various diagnostic modalities, acoustic-based (voiceprint) methods have attracted considerable research attention owing to their non-contact measurement capability, ease of deployment, and low transducer cost. However, effective fault diagnosis from acoustic signals requires addressing three fundamental challenges: single-modality time--frequency representations capture only partial fault signatures, limiting discriminative power; real-world substation environments introduce substantial background noise that degrades classification reliability; and the scarcity of labeled fault data in practical settings constrains the generalization capability of purely data-driven models.
+Power transformers are critical assets in modern electrical power systems, and the continuous monitoring of their operational condition is essential for maintaining grid safety, reliability, and stability \cite{HE2026119781,10492658}. Among various diagnostic modalities, acoustic-based methods have attracted considerable research attention owing to their non-contact measurement capability, ease of deployment, and low transducer cost. However, effective fault diagnosis from acoustic signals requires addressing three fundamental challenges: single-modality time--frequency representations capture only partial fault signatures, limiting discriminative power; real-world substation environments introduce substantial background noise that degrades classification reliability; and the scarcity of labeled fault data in practical settings constrains the generalization capability of purely data-driven models.
 
-To extract informative representations from acoustic signals, a variety of time--frequency analysis techniques have been explored. The Mel spectrogram, which emulates the non-linear frequency perception of the human auditory system, has been widely adopted for voiceprint-based transformer monitoring \cite{a1,10606641}. Wavelet transform-based denoising has been employed to enhance partial discharge signal recognition \cite{4265659}, while Short-Time Fourier Transform (STFT) analysis has been applied to characterize transformer winding impulse responses \cite{7558591}. More recently, Gramian Angular Field (GAF) encoding has been introduced to transform one-dimensional vibration signals into two-dimensional image representations that preserve temporal correlation structure \cite{9760386}. Despite these advances, methods relying on a single feature representation inherently struggle to capture the multi-faceted nature of fault signatures, as different fault mechanisms manifest in distinct spectral, temporal, and energy-domain characteristics.
+To extract informative representations from acoustic signals, a variety of time--frequency analysis techniques have been explored. The Mel spectrogram, which emulates the non-linear frequency perception of the human auditory system, has been widely adopted for voiceprint-based transformer monitoring \cite{a1,10606641}. Wavelet transform-based denoising has been employed to enhance partial discharge signal recognition \cite{4265659}, while short-time Fourier transform (STFT) analysis has been applied to characterize transformer winding impulse responses \cite{7558591}. More recently, Gramian angular field (GAF) encoding has been introduced to transform one-dimensional vibration signals into two-dimensional image representations that preserve temporal correlation structure \cite{9760386}. Despite these advances, methods relying on a single feature representation inherently struggle to capture the multi-faceted nature of fault signatures, as different fault mechanisms manifest in distinct spectral, temporal, and energy-domain characteristics.
 
 Concurrently, deep learning architectures have been extensively investigated for transformer fault classification. Convolutional neural networks (CNNs) operating on spectrogram images \cite{11014495}, as well as probabilistic and shallow learning models \cite{5352306,4717246}, have demonstrated promising results. More recently, advanced architectures such as Vision Transformers (ViT) \cite{dosovitskiy2021vit}, EfficientNet \cite{tan2019efficientnet}, and Swin Transformer \cite{liu2021swin} have set new performance benchmarks in image classification, yet their application to acoustic transformer diagnosis remains underexplored. A critical limitation of conventional deep learning pipelines is their purely data-driven nature: without physical guidance, these models are prone to overfitting on small datasets and exhibit degraded performance under distribution shifts caused by varying noise conditions.
 
 Physics-Informed Neural Networks (PINNs) offer a principled framework for integrating domain knowledge into the learning process \cite{9903391,r4}. By augmenting the empirical loss with physics-derived regularization terms, PINNs can learn physically consistent representations even when training data are limited or noisy. This paradigm has been successfully applied to dissolved gas analysis \cite{10964340}, wind turbine monitoring \cite{11027711}, and various scientific computing tasks \cite{10551894}. In the context of acoustic transformer diagnosis, the relevant physics arises from sound wave propagation; i.e., the acoustic pressure field $p(\mathbf{x}, t)$ within the transformer tank obeys the wave equation, which under time-harmonic excitation reduces to the Helmholtz equation $\nabla^2 p + k^2 p = 0$, where $k = \omega/c$ is the wavenumber. In source-free regions of the domain, where the acoustic wavelength is large relative to the spatial variation of the pressure field, the Helmholtz equation further simplifies to the Laplace equation $\nabla^2 p \approx 0$. This physical prior, i.e., that fault-free acoustic fields are spatially smooth, motivates a Laplacian regularization constraint that penalizes high-frequency artifacts in the learned feature representations, thereby encouraging the network to focus on physically meaningful, fault-induced deviations from smoothness.
 
-In this paper, we propose a comprehensive framework that addresses the three aforementioned challenges through synergistic integration of multi-modal feature fusion, biologically inspired denoising, and physics-informed representation learning. The principal contributions are:
+In this paper, we propose a comprehensive framework that addresses the three aforementioned challenges through synergistic integration of multi-modal feature fusion, biologically inspired denoising, and physics-informed representation learning. The principal contributions are as follows:
 
 \begin{enumerate}
 	\item \textbf{Multi-modal fusion and PCNN enhancement:} A three-channel representation combining Mel spectrograms, Gramian Angular Difference Fields, and their pixel-wise difference is constructed to capture complementary spectral and temporal fault signatures. Gamma correction ($\gamma = 1.7$) enhances low-energy regions, while a Pulse-Coupled Neural Network suppresses background noise through synchronized neuronal firing dynamics.
@@ -83,11 +71,11 @@ In this paper, we propose a comprehensive framework that addresses the three afo
 	\item \textbf{Rigorous experimental validation:} Component-wise ablation, five-fold cross-validation, and comparison with several representative methods collectively demonstrate state-of-the-art performance and confirm the contribution of each proposed component.
 \end{enumerate}
 
-The remainder of this paper is organized as follows. Section~2 describes the time--frequency representation methods. Section~3 presents the feature extraction and fusion pipeline. Section~4 formulates the physics-informed learning framework. Section~5 reports the experimental setup and comprehensive results. Section~6 concludes the paper.
+The remainder of this paper is organized as follows. Section~\ref{section2} describes the time--frequency representation methods. Section~\ref{section3} presents the feature extraction and fusion pipeline. Section~\ref{section4} formulates the physics-informed learning framework. Section~\ref{section5} reports the experimental setup and comprehensive results. Section~\ref{section6} concludes the paper.
 
 The overall framework is illustrated in Fig.~\ref{fig0}.
 
-\begin{figure*}
+\begin{figure*}[t]
 	\centering
 	\includegraphics[width=1.0\linewidth]{drawing/pinn-alexnet/pinn-alexnet}
 	\caption{Overall framework of the proposed transformer fault diagnosis method. The pipeline consists of four stages: (1) multi-modal time--frequency representation via Mel spectrogram and GADF, (2) three-channel feature fusion with gamma correction, (3) PCNN-based feature enhancement, and (4) physics-informed AlexNet-SE classification with Laplacian regularization.}
@@ -95,16 +83,17 @@ The overall framework is illustrated in Fig.~\ref{fig0}.
 \end{figure*}
 
 \section{Time-Frequency Domain Representation}
+\label{section2}
 
 \subsection{Mel Spectrogram}
 \label{subsec1}
-The Mel spectrogram emulates the non-linear frequency perception of the human auditory system, which is more sensitive to low-frequency variations than to high-frequency changes \cite{WANG2026119319,10768989}. The transformation from linear frequency $f$ (Hz) to the Mel scale is given by \cite{SHAN2023112408,11097896}, i.e.,
+The Mel spectrogram emulates the non-linear frequency perception of the human auditory system, which is more sensitive to low-frequency variations than to high-frequency changes \cite{WANG2026119319,10768989}. The transformation from linear frequency $f$ to the Mel scale is given by \cite{SHAN2023112408,11097896}, i.e.,
 \begin{equation}
 	f_{\text{mel}} = 2595 \log_{10}\!\left(1 + \frac{f}{700}\right)
 \end{equation}
 \noindent where $f_{\text{mel}}$ is the perceived frequency on the Mel scale. As the physical frequency increases, the Mel-scale frequency increases sub-linearly, yielding higher spectral resolution in low-frequency bands where transformer acoustic fault signatures are predominantly concentrated \cite{4712660}. This perceptual scaling motivates the choice of the Mel spectrogram as the primary spectral representation.
 
-For each 1-second segment of the transformer acoustic signal, the short-time Fourier transform (STFT) is computed using a Hamming window of 25~ms with 50\% overlap, yielding a linear-frequency spectrogram. This spectrogram is subsequently processed through a Mel filter bank consisting of 128 triangular filters uniformly spaced on the Mel scale. Each filter overlaps with its neighbors such that the lower corner frequency of one filter coincides with the center frequency of the preceding filter \cite{r1}. The $m$-th triangular filter $H_m(k)$ is defined as:
+For each 1 second segment of the transformer acoustic signal, the short-time Fourier transform (STFT) is computed using a Hamming window of 25~ms with 50\% overlap, yielding a linear-frequency spectrogram. This spectrogram is subsequently processed through a Mel filter bank consisting of 128 triangular filters uniformly spaced on the Mel scale. Each filter overlaps with its neighbors such that the lower corner frequency of one filter coincides with the center frequency of the preceding filter \cite{r1}. The $m$-th triangular filter $H_m(k)$ is defined as follows,
 \begin{equation}
 	H_m(k) = 
 	\begin{cases} 
@@ -136,16 +125,16 @@ For each 1-second segment of the transformer acoustic signal, the short-time Fou
 \end{figure}
 
 \subsection{Gramian Angular Field}
-The Gramian Angular Field (GAF) is a method for encoding one-dimensional time series into two-dimensional image representations that preserve the temporal correlation structure \cite{10114345}. By representing time-series values in polar coordinates and computing pairwise trigonometric interactions, GAF produces images where each element $(i,j)$ encodes the temporal relationship between time steps $i$ and $j$. Two variants exist: the Gramian Angular Summation Field (GASF) based on $\cos(\phi_i + \phi_j)$, and the Gramian Angular Difference Field (GADF) based on $\sin(\phi_i - \phi_j)$ \cite{10281942}. The encoding procedure involves three steps:
+The Gramian Angular Field (GAF) is a method for encoding one-dimensional time series into two-dimensional image representations that preserve the temporal correlation structure \cite{10114345}. By representing time-series values in polar coordinates and computing pairwise trigonometric interactions, GAF produces images where each element $(i,j)$ encodes the temporal relationship between time steps $i$ and $j$. Two variants exist, i.e., the Gramian Angular Summation Field (GASF) based on $\cos(\phi_i + \phi_j)$, and the Gramian Angular Difference Field (GADF) based on $\sin(\phi_i - \phi_j)$ \cite{10281942}. The encoding procedure involves three steps:
 
 \begin{enumerate}
-	\item \textbf{Normalization:} Given a univariate time series $X = \{x_1, x_2, \ldots, x_n\}$ of length $n$, the values are rescaled to the interval $[-1, 1]$ via min-max normalization:
+	\item \textbf{Normalization:} Given a univariate time series $X = \{x_1, x_2, \ldots, x_n\}$ of length $n$, the values are rescaled to the interval $[-1, 1]$ via min-max normalization as follows,
 	\begin{equation}
 		\tilde{x}_i = \frac{(x_i - \min X) + (x_i - \max X)}{\max X - \min X}, \quad i = 1, 2, \ldots, n
 	\end{equation}
 	yielding the normalized series $\tilde{X} = \{\tilde{x}_1, \tilde{x}_2, \ldots, \tilde{x}_n\}$.
 	
-	\item \textbf{Polar encoding:} Each normalized value $\tilde{x}_i$ is mapped to a polar coordinate representation $(\phi_i, r_i)$ as:
+	\item \textbf{Polar encoding:} Each normalized value $\tilde{x}_i$ is mapped to a polar coordinate representation $(\phi_i, r_i)$,
 	\begin{equation}
 		\begin{cases} 
 			\phi_i = \arccos(\tilde{x}_i), & -1 \leq \tilde{x}_i \leq 1 \\[4pt]
@@ -154,14 +143,14 @@ The Gramian Angular Field (GAF) is a method for encoding one-dimensional time se
 	\end{equation}
 	where $\phi_i \in [0, \pi]$ is the angular coordinate encoding the amplitude, and $r_i \in [0, 1]$ is the radial coordinate encoding the temporal position. This bijective mapping ensures that temporal ordering is preserved in the polar representation.
 	
-	\item \textbf{Gramian matrix construction:} The GASF $\bm{G}_s$ and GADF $\bm{G}_d$ are computed as:
+	\item \textbf{Gramian matrix construction:} The GASF $\bm{G}_s$ and GADF $\bm{G}_d$ are computed as follows,
 	\begin{equation}
 		\bm{G}_s = \begin{bmatrix}
 			\cos(\phi_1 + \phi_1) & \cos(\phi_1 + \phi_2) & \cdots & \cos(\phi_1 + \phi_n) \\
 			\cos(\phi_2 + \phi_1) & \cos(\phi_2 + \phi_2) & \cdots & \cos(\phi_2 + \phi_n) \\
 			\vdots & \vdots & \ddots & \vdots \\
 			\cos(\phi_n + \phi_1) & \cos(\phi_n + \phi_2) & \cdots & \cos(\phi_n + \phi_n)
-		\end{bmatrix}
+		\end{bmatrix},
 	\end{equation}
 	\begin{equation}
 		\bm{G}_d = \begin{bmatrix}
@@ -169,27 +158,28 @@ The Gramian Angular Field (GAF) is a method for encoding one-dimensional time se
 			\sin(\phi_2 - \phi_1) & \sin(\phi_2 - \phi_2) & \cdots & \sin(\phi_2 - \phi_n) \\
 			\vdots & \vdots & \ddots & \vdots \\
 			\sin(\phi_n - \phi_1) & \sin(\phi_n - \phi_2) & \cdots & \sin(\phi_n - \phi_n)
-		\end{bmatrix}
+		\end{bmatrix}.
 	\end{equation}
 \end{enumerate}
 
 The GASF encodes the summation of angular differences, capturing co-directional relationships, while the GADF encodes the difference of angular values, capturing orthogonality relationships and offering greater sensitivity to local phase variations \cite{8975572}. In this study, both GASF and GADF representations are computed, and their relative efficacy is compared experimentally (see Section~5.2). Fig.~\ref{fig2} shows the GASF and GADF representations of a transformer acoustic signal under normal conditions.
 
-\begin{figure}[!t]
+\begin{figure}[t]
 	\centering
 	\graphicspath{{GAF/}}
-	\subfloat[]{\includegraphics[width=0.22\textwidth]{GASF}}\hfill
-	\subfloat[]{\includegraphics[width=0.22\textwidth]{GADF}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{GASF}}\hfill
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{GADF}}
 	\caption{GAF representations of a transformer acoustic signal: (a) GASF, (b) GADF. The GADF representation exhibits stronger contrast in the off-diagonal texture patterns, which capture transient fault signatures more distinctly.}
 	\label{fig2}
 \end{figure}
 
 
 \section{Multi-Modal Feature Extraction and Fusion}
+\label{section3}
 \subsection{Mel-GAF Three-Channel Fusion Strategy}
 Feature fusion is a well-established technique for combining complementary information from heterogeneous representations to improve model performance \cite{10902169,10856367}. In this work, we propose a three-channel fusion strategy that constructs an RGB-like image where each color channel encodes a distinct modality or derived feature, enabling the CNN backbone to learn joint representations across spectral, temporal, and differential domains.
 
-Given a 1-second acoustic segment, the Mel spectrogram $\bm{M} \in \mathbb{R}^{H \times W}$ and the GADF representation $\bm{G}_d \in \mathbb{R}^{n \times n}$ are computed independently. Both representations are first resized to a unified spatial resolution of $224 \times 224$ pixels using bicubic interpolation and normalized to the range $[0, 1]$. The three-channel fused image $\bm{I}_{\text{fused}} \in \mathbb{R}^{3 \times 224 \times 224}$ is then constructed as:
+Given a 1 second acoustic segment, the Mel spectrogram $\bm{M} \in \mathbb{R}^{H \times W}$ and the GADF representation $\bm{G}_d \in \mathbb{R}^{n \times n}$ are computed independently. Both representations are first resized to a unified spatial resolution of $224 \times 224$ pixels using bicubic interpolation and normalized to the range $[0, 1]$. The three-channel fused image $\bm{I}_{\text{fused}} \in \mathbb{R}^{3 \times 224 \times 224}$ is then constructed as follows,
 
 \begin{equation}
 	\bm{I}_{\text{fused}} = \begin{bmatrix}
@@ -198,21 +188,18 @@ Given a 1-second acoustic segment, the Mel spectrogram $\bm{M} \in \mathbb{R}^{H
 		\bm{M}_{\text{norm}} \\
 		\bm{G}_{d,\text{norm}} \\
 		|\bm{M}_{\text{norm}} - \bm{G}_{d,\text{norm}}|
-	\end{bmatrix}
+	\end{bmatrix},
 \end{equation}
-
-\noindent where the red (R) channel encodes the Mel spectrogram energy distribution, the green (G) channel captures the GADF-derived temporal correlation texture, and the blue (B) channel encodes the pixel-wise absolute difference between the two modalities. The difference channel serves a dual purpose: (i) it highlights regions where the spectral energy and temporal correlation patterns diverge, which are indicative of anomalous fault signatures; and (ii) it provides the network with an explicit representation of cross-modal complementarity, facilitating the learning of synergistic features \cite{9673131}. This design ensures that each channel carries non-redundant information, enabling the CNN to exploit both modality-specific and cross-modal patterns during training.
+where the red (R) channel encodes the Mel spectrogram energy distribution, the green (G) channel captures the GADF-derived temporal correlation texture, and the blue (B) channel encodes the pixel-wise absolute difference between the two modalities. The difference channel serves a dual purpose: (i) it highlights regions where the spectral energy and temporal correlation patterns diverge, which are indicative of anomalous fault signatures; and (ii) it provides the network with an explicit representation of cross-modal complementarity, facilitating the learning of synergistic features \cite{9673131}. This design ensures that each channel carries non-redundant information, enabling the CNN to exploit both modality-specific and cross-modal patterns during training.
 
 \subsection{Image Preprocessing and Gamma Correction}
-In the raw fused images, the Mel spectrogram channel (R) tends to exhibit low visual saliency in low-energy frequency regions, where the spectral amplitude is orders of magnitude smaller than in dominant harmonics. This dynamic range imbalance can cause the network to overlook subtle but diagnostically important features in low-energy bands. To address this, gamma correction is applied as a preprocessing step to re-distribute pixel intensities non-linearly.
-
-Gamma correction is defined as \cite{8362729}:
+In the raw fused images, the Mel spectrogram channel (R) tends to exhibit low visual saliency in low-energy frequency regions, where the spectral amplitude is orders of magnitude smaller than in dominant harmonics. This dynamic range imbalance can cause the network to overlook subtle but diagnostically important features in low-energy bands. To address this, gamma correction is applied as a preprocessing step to re-distribute pixel intensities non-linearly. Gamma correction \cite{8362729} is defined as follows,
 \begin{equation}
-	I_{\text{out}} = c \cdot I_{\text{in}}^{\gamma}
+	I_{\text{out}} = c \cdot I_{\text{in}}^{\gamma},
 \end{equation}
-\noindent where $I_{\text{in}}, I_{\text{out}} \in [0, 1]$ are the normalized input and output pixel intensities, respectively. The parameter $c$ is a linear scaling coefficient and $\gamma$ is the gamma exponent that controls the degree of non-linear mapping. When $c = 1$, the mapping reduces to a pure power-law transformation. For $\gamma > 1$, the transformation expands the dynamic range of dark regions (low $I_{\text{in}}$) while compressing bright regions (high $I_{\text{in}}$), thereby enhancing contrast in low-intensity areas. The parameter $c \neq 1$ shifts the overall intensity level uniformly and is set to $c = 1$ in this work, as the subsequent PCNN processing provides adaptive intensity normalization. However, in scenarios where a global brightness offset is required—for instance, when compensating for systematic sensor gain variations—$c$ can be tuned accordingly.
+\noindent where $I_{\text{in}}, I_{\text{out}} \in [0, 1]$ are the normalized input and output pixel intensities, respectively. The parameter $c$ is a linear scaling coefficient and $\gamma$ is the gamma exponent that controls the degree of non-linear mapping. When $c = 1$, the mapping reduces to a pure power-law transformation. For $\gamma > 1$, the transformation expands the dynamic range of dark regions (low $I_{\text{in}}$) while compressing bright regions (high $I_{\text{in}}$), thereby enhancing contrast in low-intensity areas. The parameter $c \neq 1$ shifts the overall intensity level uniformly and is set to $c = 1$ in this work, as the subsequent PCNN processing provides adaptive intensity normalization. However, in scenarios where a global brightness offset is required, for instance, when compensating for systematic sensor gain variations, $c$ can be tuned accordingly.
 
-The selection of $\gamma = 1.7$ was determined through systematic hyperparameter optimization over a grid spanning $\gamma = 0.5$ to $3.0$ (see Section~5.4 for detailed sensitivity analysis). Values of $\gamma < 1.5$ provided insufficient contrast enhancement in low-energy regions, while $\gamma > 2.0$ led to over-saturation and loss of texture detail in high-energy regions. The optimal value $\gamma = 1.7$ achieves the best trade-off, enhancing the visibility of low-energy spectral features without distorting the overall energy distribution.
+The selection of $\gamma = 1.7$ was determined through systematic hyperparameter optimization over a grid spanning $\gamma = 0.5$ to $3.0$. Values of $\gamma < 1.5$ provided insufficient contrast enhancement in low-energy regions, while $\gamma > 2.0$ led to over-saturation and loss of texture detail in high-energy regions. The optimal value $\gamma = 1.7$ achieves the best trade-off, enhancing the visibility of low-energy spectral features without distorting the overall energy distribution.
 
 \subsection{Bicubic Interpolation}
 Image resizing is required to ensure dimensional consistency between the Mel spectrogram and GADF representations before fusion. Bicubic interpolation was selected over nearest-neighbor and bilinear methods due to its superior preservation of fine texture and edge structures, which are critical for fault feature discrimination \cite{9257189}. Given a source image $\bm{I}$, the interpolated pixel value at target coordinate $(x, y)$ is computed as a weighted sum over a $4 \times 4$ neighborhood of the source:
@@ -235,11 +222,11 @@ with $d_x = x - \lfloor x \rfloor$, $d_y = y - \lfloor y \rfloor$ being the frac
 
 Fig.~\ref{fig3} compares the fused Mel-GADF image before and after gamma correction. In the uncorrected image (Fig.~\ref{fig3}(a)), low-frequency regions appear dark and texturally indistinct due to the large dynamic range of spectral amplitudes. After applying gamma correction with $\gamma = 1.7$ (Fig.~\ref{fig3}(b)), the contrast in these regions is significantly enhanced, revealing detailed structural patterns that facilitate the network's ability to learn subtle fault-related features.
 
-\begin{figure}[!t]
+\begin{figure}[t]
 	\centering
 	\graphicspath{{Mel-GAF-Noise/}}
-	\subfloat[]{\includegraphics[width=0.22\textwidth]{1}}\hfill
-	\subfloat[]{\includegraphics[width=0.22\textwidth]{2}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{1}}\hfill
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{2}}
 	\caption{Comparison of the fused Mel-GADF image (a) before and (b) after gamma correction with $\gamma = 1.7$. The corrected image exhibits enhanced contrast in low-energy regions while preserving high-energy structural details.}
 	\label{fig3}
 \end{figure}
@@ -332,7 +319,7 @@ For each pixel location $(i, j)$, the PCNN dynamics are governed by three intera
 
 The key insight for applying PCNNs to spectrogram enhancement is that the synchronized firing mechanism naturally suppresses isolated, low-magnitude noise pixels (which fail to reach the firing threshold) while amplifying spatially coherent structures such as harmonic lines and fault-induced spectral ridges (which receive strong lateral excitation from neighboring neurons). Fig.~\ref{fig5} illustrates the effect of varying the initial threshold $V_T$ on the PCNN-enhanced Mel-GADF image. As $V_T$ increases, background noise is progressively suppressed. At $V_T = 0.8$, a favorable balance is achieved where discriminative fault features are preserved while unstructured noise is effectively attenuated. At $V_T \geq 1.0$, neuronal firing is nearly fully inhibited, resulting in a blank output. The threshold $V_T = 0.8$ and iteration count $N = 10$ are selected based on systematic parameter analysis (see Section~5.4).
 
-\begin{figure}[!t]
+\begin{figure}[t]
 	\centering
 	\graphicspath{{VT/}}
 	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part0}}\hfill
@@ -345,7 +332,7 @@ The key insight for applying PCNNs to spectrogram enhancement is that the synchr
 
 
 \section{Physics-Informed Representation Learning for Fault Diagnosis}
-
+\label{section4}
 \subsection{Physical Motivation: Acoustic Wave Propagation in Transformer Tanks}
 
 The core innovation of the proposed PINN framework lies in the physically grounded choice of the regularization functional. We establish the connection between the Laplacian operator and transformer acoustics through the physics of sound wave propagation.
@@ -443,12 +430,12 @@ To comprehensively evaluate the generalizability of the physics-informed framewo
 	\centering
 	\caption{Network Architecture of Modules (Enhanced for PINNs)}
 	\label{tab1}
+	\footnotesize
+	\setlength{\tabcolsep}{2.5pt}
 	\begin{tabular}{@{}llccccc@{}}
 		\toprule
-		
-		\textbf{Module} & \textbf{Layer} & \textbf{Input size (C$\times$H$\times$W)} & \textbf{Kernel size} &  \textbf{Stride} & \textbf{Channels} & \textbf{Output size (C$\times$H$\times$W)} \\
+		\textbf{Module} & \textbf{Layer} & \textbf{Input (C$\times$H$\times$W)} & \textbf{Kernel} & \textbf{Stride} & \textbf{Ch.} & \textbf{Output (C$\times$H$\times$W)} \\
 		\midrule
-		
 		\multirow{7}{*}{\textbf{LeNet}} 
 		&Conv1        & 3$\times$224$\times$224 & 5$\times$5 & 1  & 6   & 6$\times$224$\times$224 \\
 		&ReLU1         & 6$\times$224$\times$224  & --          & --     & 6        & 6$\times$224$\times$224 \\
@@ -458,7 +445,6 @@ To comprehensively evaluate the generalizability of the physics-informed framewo
 		&AvgPool2      & 16$\times$108$\times$108 & 2$\times$2  & 2      & 16       & 16$\times$54$\times$54 \\
 		&Phys\_Out     & 16$\times$54$\times$54   & 1$\times$1  & 1      & 1        & 1$\times$54$\times$54 \\
 		\midrule
-		
 		\multirow{9}{*}{\textbf{ResNet}} 
 		&Conv1         & 3$\times$224$\times$224  & 7$\times$7  & 2      & 32            & 32$\times$112$\times$112 \\
 		&BN + ReLU     & 32$\times$112$\times$112 & --          & --     & 32            & 32$\times$112$\times$112 \\
@@ -470,7 +456,6 @@ To comprehensively evaluate the generalizability of the physics-informed framewo
 		&Phys\_Out     & 256$\times$7$\times$7    & 1$\times$1  & 1      & 1              & 1$\times$7$\times$7 \\
 		&AvgPool       & 256$\times$7$\times$7    & Adaptive    & --     & 256            & 256$\times$1$\times$1 \\
 		\midrule
-		
 		\multirow{10}{*}{\textbf{ConvNeXt}} 
 		&Stem Conv     & 3$\times$224$\times$224 & 4$\times$4  & 4      & 96              & 96$\times$56$\times$56 \\
 		&Stage 1       & 96$\times$56$\times$56  & 3$\times$3  & 1      & 96              & 96$\times$56$\times$56 \\
@@ -483,7 +468,6 @@ To comprehensively evaluate the generalizability of the physics-informed framewo
 		&Phys\_Out     & 768$\times$7$\times$7   & 1$\times$1  & 1      & 1               & 1$\times$7$\times$7 \\
 		&AvgPool       & 768$\times$7$\times$7   & Adaptive    & --     & 768             & 768$\times$1$\times$1 \\
 		\midrule
-		
 		\multirow{10}{*}{\textbf{AlexNet-SE}} 
 		&Conv1        & 3$\times$224$\times$224 & 5$\times$5  & 2      & 16               & 16$\times$112$\times$112 \\
 		&BN + ReLU + SE & 16$\times$112$\times$112 & --       & --     & 16               & 16$\times$112$\times$112 \\
@@ -501,7 +485,7 @@ To comprehensively evaluate the generalizability of the physics-informed framewo
 
 
 \section{Experimental Setup and Results}
-
+\label{section5}
 \subsection{Data Collection and Description}
 The acoustic dataset used in this study was collected from an operational 220~kV power transformer at a working substation. Acoustic signals were captured using an omnidirectional measurement microphone mounted on a tripod positioned approximately 1.2~m from the transformer tank surface, as shown in Fig.~\ref{fig7}. All recordings were digitized at a sampling rate of 44.1~kHz with 16-bit resolution and segmented into non-overlapping 1-second clips. The dataset encompasses five distinct transformer operating conditions:
 \begin{itemize}
@@ -513,7 +497,7 @@ The acoustic dataset used in this study was collected from an operational 220~kV
 \end{itemize}
 as summarized in Table~\ref{tab2}.
 
-\begin{table}[]
+\begin{table}[h]
 	\centering
 	\caption{Summary of Transformer Operating Conditions}
 	\label{tab2}
@@ -554,7 +538,7 @@ After session-aware partitioning, the dataset was split into training (70\%), va
 \end{table}
 
 
-\begin{figure}[!t]
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=1.0\linewidth]{equipment/采集设备}
 	\caption{Experimental platform for transformer acoustic signal acquisition at the substation.}
@@ -563,7 +547,7 @@ After session-aware partitioning, the dataset was split into training (70\%), va
 
 The overall feature extraction and classification pipeline is illustrated in Fig.~\ref{fig8}.
 
-\begin{figure*}
+\begin{figure*}[t]
 	\centering
 	\includegraphics[width=1.0\linewidth]{drawing/overall/overall}
 	\caption{End-to-end pipeline of the proposed transformer fault diagnosis framework: raw acoustic signal $\rightarrow$ Mel spectrogram + GADF $\rightarrow$ three-channel fusion with gamma correction $\rightarrow$ PCNN enhancement $\rightarrow$ physics-informed AlexNet-SE classification.}
@@ -589,7 +573,8 @@ All metrics are reported as mean $\pm$ standard deviation over five-fold stratif
 
 \subsection{Experiment 1: GASF vs.\ GADF Feature Comparison}
 
-We first compare the two GAF variants, i.e., GASF and GADF, as input representations under identical conditions (AlexNet-SE backbone, with and without PCNN enhancement). The results are presented in Table~\ref{tab4}. Mel-GADF features consistently outperform their Mel-GASF counterparts across all metrics. Without PCNN, Mel-GADF achieves an accuracy of 93.94\% versus 92.42\% for Mel-GASF, with a notably higher $G_{\text{mean}}$ (0.9587 vs.\ 0.8503), indicating more balanced per-class performance. The $F_1$ standard deviation for Mel-GADF is substantially lower ($\sigma_{F_1} = 0.0434$ vs.\ 0.1490), confirming greater classification stability across fault types. With PCNN enhancement, both feature types improve considerably, reaching 96.97\% accuracy. The superiority of GADF over GASF is attributed to its difference-based encoding ($\sin(\phi_i - \phi_j)$), which captures phase deviations more sensitively than the summation-based GASF ($\cos(\phi_i + \phi_j)$), making it better suited for detecting transient fault signatures. All subsequent experiments therefore employ the Mel-GADF-PCNN configuration.\begin{table*}[]
+We first compare the two GAF variants, i.e., GASF and GADF, as input representations under identical conditions (AlexNet-SE backbone, with and without PCNN enhancement). The results are presented in Table~\ref{tab4}. Mel-GADF features consistently outperform their Mel-GASF counterparts across all metrics. Without PCNN, Mel-GADF achieves an accuracy of 93.94\% versus 92.42\% for Mel-GASF, with a notably higher $G_{\text{mean}}$ (0.9587 vs.\ 0.8503), indicating more balanced per-class performance. The $F_1$ standard deviation for Mel-GADF is substantially lower ($\sigma_{F_1} = 0.0434$ vs.\ 0.1490), confirming greater classification stability across fault types. With PCNN enhancement, both feature types improve considerably, reaching 96.97\% accuracy. The superiority of GADF over GASF is attributed to its difference-based encoding ($\sin(\phi_i - \phi_j)$), which captures phase deviations more sensitively than the summation-based GASF ($\cos(\phi_i + \phi_j)$), making it better suited for detecting transient fault signatures. All subsequent experiments therefore employ the Mel-GADF-PCNN configuration.
+\begin{table*}[ht]
 	\centering
 	\caption{Feature Comparison: GASF vs.\ GADF with and without PCNN (AlexNet-SE Backbone)}
 	\label{tab4}
@@ -611,7 +596,7 @@ We first compare the two GAF variants, i.e., GASF and GADF, as input representat
 \subsection{Experiment 2: Backbone Architecture Comparison with PINN}
 Table~\ref{tab5} reports the performance of four backbones integrated with the physics-informed framework on Mel-GADF-PCNN input. AlexNet-SE achieves the highest performance (98.48\% accuracy, $F_1^w = 0.9849$, $G_{\text{mean}} = 0.9907$) with the lowest inter-class variance ($\sigma_{F_1} = 0.0133$). ResNet-18 and ConvNeXt-T show competitive but lower performance (both 95.45\%), while LeNet underperforms significantly (72.24\%). The confusion matrices in Fig.~\ref{fig11} confirm that AlexNet-SE correctly classifies nearly all test samples, with only a single misclassification in the N0 category.
 
-\begin{table*}[]
+\begin{table*}[ht]
 	\centering
 	\caption{Backbone Architecture Comparison with Physics-Informed Regularization (Mel-GADF-PCNN Input)}
 	\label{tab5}
@@ -629,7 +614,7 @@ Table~\ref{tab5} reports the performance of four backbones integrated with the p
 	\end{tabular}
 \end{table*}
 
-\begin{figure}[!t]
+\begin{figure}[t]
 	\centering
 	\graphicspath{{confusion/}}
 	\subfloat[]{\includegraphics[width=0.50\columnwidth]{confusion_matrix1}}\hfill
@@ -649,11 +634,13 @@ To quantify the individual contribution of each proposed component, a systematic
 	\item The full model reduces $\sigma_{F_1}$ by 58\% vs.\ baseline (0.0133 vs.\ 0.0318).
 \end{itemize}
 
-\begin{table*}[]
+\begin{sidewaystable}
+	\centering
+	\begin{minipage}{\textheight}
 	\centering
 	\caption{Component-Wise Ablation Study (Mean $\pm$ Std over 5-Fold Cross-Validation)}
 	\label{tab6}
-	\begin{tabular}{l c c c c c}
+	\begin{tabular*}{\textheight}{@{\extracolsep\fill}l c c c c c}
 		\toprule
 		\multirow{2}{*}{Model Variant} & \multicolumn{5}{c}{Metrics (mean $\pm$ std)} \\
 		\cmidrule(lr){2-6}
@@ -665,17 +652,16 @@ To quantify the individual contribution of each proposed component, a systematic
 		(4) + SE + PCNN                & $96.20 \pm 0.88$ & $0.9608 \pm 0.0091$ & $0.9656 \pm 0.0104$ & $0.0192 \pm 0.0051$ & 57.1 \\
 		(5) \textbf{Full (SE + PCNN + PINN)} & $\bm{97.26 \pm 0.82}$ & $\bm{0.9715 \pm 0.0084}$ & $\bm{0.9875 \pm 0.0098}$ & $\bm{0.0133 \pm 0.0042}$ & 57.1 \\
 		\bottomrule
-	\end{tabular}
-\end{table*}
-
-\subsection{Experiment 4: Comparison with State-of-the-Art Methods}
-We benchmark against seven representative methods (Table~\ref{tab7}) under identical five-fold cross-validation with session-aware splits.
-
-\begin{table*}[]
+	\end{tabular*}
+	\end{minipage}
+	
+	\bigskip\bigskip
+	
+	\begin{minipage}{\textheight}
 	\centering
 	\caption{Comparison with State-of-the-Art Methods (Mean $\pm$ Std over 5-Fold CV)}
 	\label{tab7}
-	\begin{tabular}{l c c c c}
+	\begin{tabular*}{\textheight}{@{\extracolsep\fill}l c c c c}
 		\toprule
 		\multirow{2}{*}{Method} & \multicolumn{4}{c}{Metrics (mean $\pm$ std)} \\
 		\cmidrule(lr){2-5}
@@ -689,17 +675,21 @@ We benchmark against seven representative methods (Table~\ref{tab7}) under ident
 		Swin-T (2D)                 & $95.82 \pm 0.94$ & $0.9568 \pm 0.0098$ & $0.9689 \pm 0.0108$ & $0.0204 \pm 0.0054$ \\
 		\textbf{Proposed (Ours)}    & $\bm{97.26 \pm 0.82}$ & $\bm{0.9715 \pm 0.0084}$ & $\bm{0.9875 \pm 0.0098}$ & $\bm{0.0133 \pm 0.0042}$ \\
 		\bottomrule
-	\end{tabular}
-\end{table*}
+	\end{tabular*}
+	\end{minipage}
+\end{sidewaystable}
+
+\subsection{Experiment 4: Comparison with State-of-the-Art Methods}
+We benchmark against seven representative methods (Table~\ref{tab7}) under identical five-fold cross-validation with session-aware splits.
 
 Key findings: (i) The end-to-end 1D-CNN ($87.14\%$) underperforms spectrogram-based methods, confirming that time-frequency representations provide valuable inductive bias for acoustic diagnosis. (ii) Among modern architectures, Swin-T achieves the best competitor performance ($95.82\%$). (iii) The proposed method outperforms Swin-T by $+1.44\%$ in accuracy ($p = 0.003$, paired $t$-test), demonstrating that PCNN + PINN provides benefits beyond architectural innovation alone.
 
-\begin{figure}
-	\centering
-	\includegraphics[width=1.0\linewidth]{drawing/fault-diagnosis/structure}
-	\caption{Structure of the fault diagnosis module.}
-	\label{fig10}
-\end{figure}
+% \begin{figure*}
+% 	\centering
+% 	\includegraphics[width=1.0\linewidth]{drawing/fault-diagnosis/structure}
+% 	\caption{Structure of the fault diagnosis module.}
+% 	\label{fig10}
+% \end{figure*}
 
 % \subsection{Experiment 5: Hyperparameter Sensitivity Analysis}
 % A systematic sensitivity analysis evaluated five key hyperparameters: gamma correction $\gamma$, PINN weight $\lambda_{\text{phy}}$, PCNN threshold $V_T$, PCNN iterations $N$, and learning rate. The macro $F_1$-score was evaluated across a grid of values using three-fold cross-validation. Key findings: $\gamma = 1.7$ provides optimal low-energy enhancement without over-saturation; $\lambda_{\text{phy}} = 0.1$ achieves the best data--physics balance (setting $\lambda_{\text{phy}} = 0$ yields $F_1 = 0.9608$, confirming the non-trivial benefit of the physical constraint); $V_T = 0.8$ balances noise suppression and feature preservation; $N = 10$ saturates performance with minimal computational overhead.
@@ -719,6 +709,7 @@ The comprehensive experimental evaluation yields several important conclusions:
 \textbf{Limitations and future work.} The dataset, while representative of real substation conditions, is of moderate size (661 total segments). Future work should validate the method on larger, multi-site datasets. Additionally, the Laplacian prior, while physically motivated, is a first-order approximation; incorporating the full Helmholtz equation with estimated wavenumber and impedance boundary conditions may yield further improvements.
 
 \section{Conclusion}
+\label{section6}
 This paper presented a multi-modal acoustic fault diagnosis framework for power transformers that integrates Mel-GADF feature fusion, PCNN-based denoising, and physics-informed representation learning within an improved AlexNet-SE architecture. The key contributions are threefold: (1) a three-channel fusion strategy that combines spectral energy, temporal correlation, and cross-modal difference information; (2) a biologically inspired PCNN front-end that suppresses noise through synchronized neuronal dynamics; and (3) a physics-informed Laplacian regularization derived from the acoustic Helmholtz equation, which imposes physically meaningful smoothness constraints on the learned feature representations.
 
 Comprehensive experiments demonstrate the following:
@@ -731,8 +722,11 @@ Comprehensive experiments demonstrate the following:
 
 Future research directions include: (i) extending the framework to multi-site deployments with domain adaptation; (ii) incorporating higher-order acoustic physics such as the full Helmholtz equation with impedance boundary conditions; (iii) exploring lightweight model variants for edge deployment on substation hardware; and (iv) validating the method on additional fault types and combined fault scenarios.
 
-  \bibliographystyle{elsarticle-num-names}
-  \bibliography{references}
+\section{Acknowledgements}
+
+This work is supported by the National Natural Science Foundation of China (No.~12404545), the Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).
+
+\bibliography{references}
 
 \end{document}
 
