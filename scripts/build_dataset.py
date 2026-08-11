@@ -262,6 +262,10 @@ def main():
         help="Also split into train/val/test after building.",
     )
     parser.add_argument(
+        "--split_only", action="store_true",
+        help="Only split an existing ImageFolder directory (skip building).",
+    )
+    parser.add_argument(
         "--train_ratio", type=float, default=0.7,
     )
     parser.add_argument(
@@ -274,6 +278,23 @@ def main():
         "--seed", type=int, default=42,
     )
     args = parser.parse_args()
+
+    if args.split_only:
+        # Only split an existing directory (no WAV processing)
+        if not Path(args.input_dir).is_dir():
+            print(f"[ERROR] Input directory not found: {args.input_dir}")
+            sys.exit(1)
+        split_output = args.output_dir if args.output_dir != "./datasets/mel_gadf_fused" else \
+            str(Path(args.input_dir).parent / (Path(args.input_dir).name + "_split"))
+        split_dataset(
+            data_dir=args.input_dir,
+            output_dir=split_output,
+            train_ratio=args.train_ratio,
+            val_ratio=args.val_ratio,
+            test_ratio=args.test_ratio,
+            seed=args.seed,
+        )
+        sys.exit(0)
 
     # Step 1: Build fused images
     build_dataset(

@@ -90,9 +90,12 @@ class PINNAlexNetClassifier(nn.Module):
         # Physics output head: produces a 1-channel physical field
         self.phys_out = nn.Conv2d(512, 1, kernel_size=1)
 
+        # Physical field feedback: pooled phys field is concatenated with
+        # feature vector before classification (see manuscript Section 4.4).
+        # The +1 accounts for the global-average-pooled phys field.
         self.classifier = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(512 * 7 * 7, 1024),
+            nn.Linear(512 * 7 * 7 + 1, 1024),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
             nn.Linear(1024, num_classes),
@@ -113,6 +116,10 @@ class PINNAlexNetClassifier(nn.Module):
         feat = self.features(x)
         out_phys = self.phys_out(feat)
         pooled = self.avgpool(feat)
-        out_cls = self.classifier(pooled.view(pooled.size(0), -1))
+
+        # Physical field feedback: global-average-pool phys → scalar per sample
+        phys_feedback = out_phys.view(out_phys.size(0), -1).mean(dim=1, keepdim=True)
+        fused = torch.cat([pooled.view(pooled.size(0), -1), phys_feedback], dim=1)
+        out_cls = self.classifier(fused)
 
         return out_cls, out_phys

@@ -42,7 +42,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.datasets.image_classification import MelSpectrogramDataset
-from src.models.pinn_alexnet import PINNAlexNet
 from src.models.pcnn import PCNNLayer
 from src.models.se_block import SEModule
 from src.utils.laplacian import laplacian_loss
@@ -204,8 +203,9 @@ class ProposedModel(nn.Module):
         )
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
         self.phys_out = nn.Conv2d(512, 1, 1)
+        # Physical field feedback (Section 4.4): +1 for global-average-pooled phys field
         self.classifier = nn.Sequential(
-            nn.Dropout(0.5), nn.Linear(512 * 7 * 7, 1024), nn.ReLU(True),
+            nn.Dropout(0.5), nn.Linear(512 * 7 * 7 + 1, 1024), nn.ReLU(True),
             nn.Dropout(0.5), nn.Linear(1024, num_classes),
         )
 
@@ -214,7 +214,10 @@ class ProposedModel(nn.Module):
         feat = self.features(x)
         phys = self.phys_out(feat)
         pooled = self.avgpool(feat)
-        return self.classifier(pooled.view(pooled.size(0), -1)), phys
+        # Physical field feedback: global-average-pool phys → scalar per sample
+        phys_feedback = phys.view(phys.size(0), -1).mean(dim=1, keepdim=True)
+        fused = torch.cat([pooled.view(pooled.size(0), -1), phys_feedback], dim=1)
+        return self.classifier(fused), phys
 
 
 # ---------------------------------------------------------------------------
@@ -393,8 +396,8 @@ def run_sota_comparison(config):
                 metrics = evaluate_model(model, test_loader, device)
 
             elif method_cfg["type"] == "convnext":
-                from src.models.pinn_convnext import PINNConvNeXt
-                model = PINNConvNeXt(config["num_classes"], in_channels=method_cfg["in_channels"]).to(device)
+                from src.models.pinn_convnext import PINNConvNeXtClassifier
+                model = PINNConvNeXtClassifier(config["num_classes"], in_channels=method_cfg["in_channels"]).to(device)
                 model = train_model(model, train_loader, test_loader, device,
                                     config["epochs"], config["lr"], config["weight_decay"])
                 metrics = evaluate_model(model, test_loader, device)

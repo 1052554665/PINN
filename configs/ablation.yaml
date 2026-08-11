@@ -1,0 +1,38 @@
+# =============================================================================
+# Ablation Study Configuration
+# =============================================================================
+# Used by scripts/ablation_study.py for component-wise ablation experiments.
+# Evaluates: Baseline → +SE → +PINN → +PCNN → Full model
+# =============================================================================
+
+experiment_name: ablation
+seed: 42
+device: auto
+
+# ---------------------------------------------------------------------------
+# Dataset configuration
+# ---------------------------------------------------------------------------
+dataset:
+  root_dir: ./datasets/mel_gadf_pcnn          # flat ImageFolder structure
+  img_size: 224
+  batch_size: 32
+  num_workers: 4
+  pin_memory: true
+
+# ---------------------------------------------------------------------------
+# Ablation variants
+# ---------------------------------------------------------------------------
+ablation:
+  num_classes: 5
+  in_channels: 3                               # RGB fused images
+  num_folds: 5                                 # 5-fold stratified CV
+  epochs: 50
+  lr: 0.01
+  weight_decay: 0.0001
+  momentum: 0.9
+  lambda_phy: 0.1
+  pcnn_steps: 10
+  scheduler_factor: 0.5
+  scheduler_patience: 5
+  early_stopping_patience: 15
+  output_dir: ./experiments/ablation
