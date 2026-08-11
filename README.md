@@ -403,12 +403,11 @@ python scripts/visualize.py --results_dir experiments/
 If you use this code in your research, please cite:
 
 ```bibtex
-@article{yang2025pcnn,
+@article{yang2026pinn,
   title={PCNN-Enhanced Multi-Representation Fusion with Physics-Informed
          Learning for Power Transformer Fault Diagnosis},
-  author={Yang, Chen and Bai, Zonglong and Xie, Zhiyuan and
-          Liu, Chenggang and Zhang, Junyan},
-  year={2025}
+  author={Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu and Junyan Zhang},
+  year={2026}
 }
 ```
 
