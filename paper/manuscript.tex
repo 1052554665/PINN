@@ -1,4 +1,4 @@
-\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+\documentclass[twocolumn,iicol,pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style (Springer double-column design)
 
 %%%% Standard Packages
 \usepackage{graphicx}
@@ -12,6 +12,28 @@
 \usepackage{tikz-3dplot}
 \usetikzlibrary{positioning, shapes.geometric, decorations.pathreplacing, calc}
 \usepackage{bm}
+
+% ======================================================================
+% Journal-compliant large-format layout (Springer large-size design):
+% text area 174 mm x 234 mm, columns 84 mm (columnsep 6 mm), so that
+% single-column figures are 84 mm wide, full-width figures 174 mm wide,
+% and figures are at most 234 mm high.
+% ======================================================================
+\geometry{%
+    paperwidth=210mm,
+    paperheight=297mm,
+    top=26mm,
+    headheight=12pt,
+    headsep=5.15mm,
+    text={173.35mm,233.12mm},
+    marginparsep=5mm,
+    marginparwidth=12mm,
+    bindingoffset=6mm,
+    footskip=10mm,
+    columnsep=6mm,
+    reversemp,
+    twocolumn%
+}
 
 \begin{document}
 
@@ -113,7 +135,7 @@ For each 1 second segment of the transformer acoustic signal, the short-time Fou
 
 \noindent where $H_m(k)$ represents the response of the $m$-th filter at frequency bin $k$, and $f(m-1)$, $f(m)$, and $f(m+1)$ denote the lower corner, center, and upper corner frequencies, respectively. The resulting Mel spectrogram for a transformer under normal operating conditions is illustrated in Fig.~\ref{fig1}.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 	\centering
 	\begin{subfigure}[b]{0.45\textwidth}
 		\centering
@@ -128,7 +150,7 @@ For each 1 second segment of the transformer acoustic signal, the short-time Fou
 	\end{subfigure}
 	\caption{Transformer acoustic signal under normal operating conditions. (a) Time-domain waveform. (b) Corresponding Mel spectrogram.}
 	\label{fig1}
-\end{figure}
+\end{figure*}
 
 \subsection{Gramian Angular Field}
 The Gramian Angular Field (GAF) is a method for encoding one-dimensional time series into two-dimensional image representations that preserve the temporal correlation structure \cite{10114345}. By representing time-series values in polar coordinates and computing pairwise trigonometric interactions, GAF produces images where each element $(i,j)$ encodes the temporal relationship between time steps $i$ and $j$. Two variants exist, i.e., the Gramian Angular Summation Field (GASF) based on $\cos(\phi_i + \phi_j)$, and the Gramian Angular Difference Field (GADF) based on $\sin(\phi_i - \phi_j)$ \cite{10281942}. The encoding procedure involves three steps:
@@ -136,7 +158,7 @@ The Gramian Angular Field (GAF) is a method for encoding one-dimensional time se
 \begin{enumerate}
 	\item \textbf{Normalization:} Given a univariate time series $X = \{x_1, x_2, \ldots, x_n\}$ of length $n$, the values are rescaled to the interval $[-1, 1]$ via min-max normalization as follows,
 	\begin{equation}
-		\tilde{x}_i = \frac{(x_i - \min X) + (x_i - \max X)}{\max X - \min X}, \quad i = 1, 2, \ldots, n
+		\resizebox{0.8\columnwidth}{!}{$\tilde{x}_i = \dfrac{(x_i - \min X) + (x_i - \max X)}{\max X - \min X}, \quad i = 1, 2, \ldots, n$}
 	\end{equation}
 	yielding the normalized series $\tilde{X} = \{\tilde{x}_1, \tilde{x}_2, \ldots, \tilde{x}_n\}$.
 	
@@ -151,33 +173,33 @@ The Gramian Angular Field (GAF) is a method for encoding one-dimensional time se
 	
 	\item \textbf{Gramian matrix construction:} The GASF $\bm{G}_s$ and GADF $\bm{G}_d$ are computed as follows,
 	\begin{equation}
-		\bm{G}_s = \begin{bmatrix}
+		\resizebox{0.8\columnwidth}{!}{$\bm{G}_s = \begin{bmatrix}
 			\cos(\phi_1 + \phi_1) & \cos(\phi_1 + \phi_2) & \cdots & \cos(\phi_1 + \phi_n) \\
 			\cos(\phi_2 + \phi_1) & \cos(\phi_2 + \phi_2) & \cdots & \cos(\phi_2 + \phi_n) \\
 			\vdots & \vdots & \ddots & \vdots \\
 			\cos(\phi_n + \phi_1) & \cos(\phi_n + \phi_2) & \cdots & \cos(\phi_n + \phi_n)
-		\end{bmatrix},
+		\end{bmatrix},$}
 	\end{equation}
 	\begin{equation}
-		\bm{G}_d = \begin{bmatrix}
+		\resizebox{0.8\columnwidth}{!}{$\bm{G}_d = \begin{bmatrix}
 			\sin(\phi_1 - \phi_1) & \sin(\phi_1 - \phi_2) & \cdots & \sin(\phi_1 - \phi_n) \\
 			\sin(\phi_2 - \phi_1) & \sin(\phi_2 - \phi_2) & \cdots & \sin(\phi_2 - \phi_n) \\
 			\vdots & \vdots & \ddots & \vdots \\
 			\sin(\phi_n - \phi_1) & \sin(\phi_n - \phi_2) & \cdots & \sin(\phi_n - \phi_n)
-		\end{bmatrix}.
+		\end{bmatrix}.$}
 	\end{equation}
 \end{enumerate}
 
 The GASF encodes the summation of angular differences, capturing co-directional relationships, while the GADF encodes the difference of angular values, capturing orthogonality relationships and offering greater sensitivity to local phase variations \cite{8975572}. In this study, both GASF and GADF representations are computed, and their relative efficacy is compared experimentally (see Section~5.2). Fig.~\ref{fig2} shows the GASF and GADF representations of a transformer acoustic signal under normal conditions.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 	\centering
 	\graphicspath{{GAF/}}
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{GASF}}\hfill
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{GADF}}
 	\caption{GAF representations of a transformer acoustic signal: (a) GASF, (b) GADF. The GADF representation exhibits stronger contrast in the off-diagonal texture patterns, which capture transient fault signatures more distinctly.}
 	\label{fig2}
-\end{figure}
+\end{figure*}
 
 
 \section{Multi-Modal Feature Extraction and Fusion}
@@ -188,13 +210,13 @@ Feature fusion is a well-established technique for combining complementary infor
 Given a 1 second acoustic segment, the Mel spectrogram $\bm{M} \in \mathbb{R}^{H \times W}$ and the GADF representation $\bm{G}_d \in \mathbb{R}^{n \times n}$ are computed independently. Both representations are first resized to a unified spatial resolution of $224 \times 224$ pixels using bicubic interpolation and normalized to the range $[0, 1]$. The three-channel fused image $\bm{I}_{\text{fused}} \in \mathbb{R}^{3 \times 224 \times 224}$ is then constructed as follows,
 
 \begin{equation}
-	\bm{I}_{\text{fused}} = \begin{bmatrix}
+	\resizebox{0.8\columnwidth}{!}{$\bm{I}_{\text{fused}} = \begin{bmatrix}
 		\bm{I}_R \\ \bm{I}_G \\ \bm{I}_B
 	\end{bmatrix} = \begin{bmatrix}
 		\bm{M}_{\text{norm}} \\
 		\bm{G}_{d,\text{norm}} \\
 		|\bm{M}_{\text{norm}} - \bm{G}_{d,\text{norm}}|
-	\end{bmatrix},
+	\end{bmatrix},$}
 \end{equation}
 where the red (R) channel encodes the Mel spectrogram energy distribution, the green (G) channel captures the GADF-derived temporal correlation texture, and the blue (B) channel encodes the pixel-wise absolute difference between the two modalities. The difference channel serves a dual purpose: (i) it highlights regions where the spectral energy and temporal correlation patterns diverge, which are indicative of anomalous fault signatures; and (ii) it provides the network with an explicit representation of cross-modal complementarity, facilitating the learning of synergistic features \cite{9673131}. This design ensures that each channel carries non-redundant information, enabling the CNN to exploit both modality-specific and cross-modal patterns during training.
 
@@ -228,14 +250,14 @@ with $d_x = x - \lfloor x \rfloor$, $d_y = y - \lfloor y \rfloor$ being the frac
 
 Fig.~\ref{fig3} compares the fused Mel-GADF image before and after gamma correction. In the uncorrected image (Fig.~\ref{fig3}(a)), low-frequency regions appear dark and texturally indistinct due to the large dynamic range of spectral amplitudes. After applying gamma correction with $\gamma = 1.7$ (Fig.~\ref{fig3}(b)), the contrast in these regions is significantly enhanced, revealing detailed structural patterns that facilitate the network's ability to learn subtle fault-related features.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 	\centering
 	\graphicspath{{Mel-GAF-Noise/}}
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{1}}\hfill
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{2}}
 	\caption{Comparison of the fused Mel-GADF image (a) before and (b) after gamma correction with $\gamma = 1.7$. The corrected image exhibits enhanced contrast in low-energy regions while preserving high-energy structural details.}
 	\label{fig3}
-\end{figure}
+\end{figure*}
 
 
 \subsection{Multi-Condition Fused Representations}
@@ -301,9 +323,10 @@ For each pixel location $(i, j)$, the PCNN dynamics are governed by three intera
 	where $S_{i,j}$ is the external stimulus (pixel intensity), $\alpha_F$ is the feeding decay constant, $V_F$ is the input gain coefficient, and $n$ indexes the iteration step.
 	
 	\item \textbf{Linking modulation:}
-	\begin{equation}
-		L_{i,j}[n] = e^{-\alpha_L} L_{i,j}[n-1] + V_L \sum_{(k,l) \in \mathcal{N}(i,j)} W_{i,j;k,l} \, Y_{k,l}[n-1]
-	\end{equation}
+	\begin{multline}
+		L_{i,j}[n] = e^{-\alpha_L} L_{i,j}[n-1] \\
+		+ V_L \sum_{(k,l) \in \mathcal{N}(i,j)} W_{i,j;k,l} \, Y_{k,l}[n-1]
+	\end{multline}
 	where $L_{i,j}[n]$ aggregates the binary pulse outputs $Y_{k,l}$ from neighboring neurons within a local receptive field $\mathcal{N}(i,j)$, weighted by a Gaussian coupling kernel $W_{i,j;k,l}$.
 	
 	\item \textbf{Internal activity and pulse generation:}
@@ -325,7 +348,7 @@ For each pixel location $(i, j)$, the PCNN dynamics are governed by three intera
 
 The key insight for applying PCNNs to spectrogram enhancement is that the synchronized firing mechanism naturally suppresses isolated, low-magnitude noise pixels (which fail to reach the firing threshold) while amplifying spatially coherent structures such as harmonic lines and fault-induced spectral ridges (which receive strong lateral excitation from neighboring neurons). Fig.~\ref{fig5} illustrates the effect of varying the initial threshold $V_T$ on the PCNN-enhanced Mel-GADF image. As $V_T$ increases, background noise is progressively suppressed. At $V_T = 0.8$, a favorable balance is achieved where discriminative fault features are preserved while unstructured noise is effectively attenuated. At $V_T \geq 1.0$, neuronal firing is nearly fully inhibited, resulting in a blank output. The threshold $V_T = 0.8$ and iteration count $N = 10$ are selected based on systematic parameter analysis (see Section~5.4).
 
-\begin{figure}[t]
+\begin{figure*}[t]
 	\centering
 	\graphicspath{{VT/}}
 	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part0}}\hfill
@@ -334,7 +357,7 @@ The key insight for applying PCNNs to spectrogram enhancement is that the synchr
 	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part08}}
 	\caption{Effect of PCNN processing with different initial thresholds $V_T$ on the Mel-GADF image: (a) Original (no PCNN), (b) $V_T = 0.4$, (c) $V_T = 0.6$, (d) $V_T = 0.8$. Higher thresholds yield stronger noise suppression while preserving edge structures.}
 	\label{fig5}
-\end{figure}
+\end{figure*}
 
 
 \section{Physics-Informed Representation Learning for Fault Diagnosis}
@@ -640,7 +663,7 @@ To quantify the individual contribution of each proposed component, a systematic
 	\item The full model reduces $\sigma_{F_1}$ by 58\% vs.\ baseline (0.0133 vs.\ 0.0318).
 \end{itemize}
 
-\begin{sidewaystable}
+\begin{sidewaystable*}
 	\centering
 	\begin{minipage}{\textheight}
 	\centering
@@ -683,7 +706,7 @@ To quantify the individual contribution of each proposed component, a systematic
 		\bottomrule
 	\end{tabular*}
 	\end{minipage}
-\end{sidewaystable}
+\end{sidewaystable*}
 
 \subsection{Experiment 4: Comparison with State-of-the-Art Methods}
 We benchmark against seven representative methods (Table~\ref{tab7}) under identical five-fold cross-validation with session-aware splits.

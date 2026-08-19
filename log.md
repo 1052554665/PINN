@@ -1,63 +1,56 @@
-- This manuscript will be submitted to Journal of Power Electronics, is the title proper? The aims and scope of this journal are as follows.
+- change manuscripts to springer's two column format.
 
-Aims and scope
-The scope of Journal of Power Electronics includes all issues in the field of Power Electronics. Included are techniques for power converters, adjustable speed drives, renewable energy, power quality and utility applications, analysis, modeling and control, power devices and components, power electronics education, and other application.
+- revise the template if needed to fit the journal's requirements as follows:
 
+```
+Figure Placement and Size
+Figures should be submitted within the body of the text. Only if the file size of the manuscript causes problems in uploading it, the large figures should be submitted separately from the text.
+When preparing your figures, size figures to fit in the column width.
+For large-sized journals the figures should be 84 mm (for double-column text areas), or 174 mm (for single-column text areas) wide and not higher than 234 mm.
+For small-sized journals, the figures should be 119 mm wide and not higher than 195 mm.
+```
 
-## Short answer
+## Changes
 
-**Partially appropriate — not ideal.** The title is technically descriptive but sits awkwardly against JPE's scope on two levels: (1) *topic–scope fit*, and (2) *title style*.
+Added a `\geometry` override in `manuscript.tex` and `manuscript.tex` right after the packages:
 
-## 1. Title–scope fit analysis
-
-| Title element | JPE scope relevance | Comment |
+| Dimension | Journal requirement | Now renders (verified from log) |
 |---|---|---|
-| Power transformer fault diagnosis | ⚠️ Marginal | JPE's scope centers on *power electronics*: converters, drives, devices, control. A power transformer is power-system equipment, not a power-electronic device. Falls at best under the catch-all "other applications". |
-| Acoustic signals (not in title!) | ⚠️ Hidden | The modality that defines the paper isn't named, so editors can't even see a potential link to sensing/monitoring. |
-| PCNN / multi-representation fusion / physics-informed learning | ❌ Method-only | These are generic AI terms; they carry zero power-electronics relevance by themselves. |
-| Mel spectrogram / GADF (not in title) | ❌ Absent | Fine to omit, but the title then has no concrete domain signal at all. |
+| Full-width figures | 174 mm | text width = **174.00 mm** |
+| Single-column figures | 84 mm | column width = **83.99 mm** (6 mm gutter) |
+| Max figure height | 234 mm | text height = **233.99 mm** |
+| Paper | — | A4 (kept for submission) |
 
-**Bottom line:** a JPE handling editor's first question will be *"what does this contribute to power electronics?"* — and the current title does not help answer it. The journal does publish some condition-monitoring/diagnosis papers on converters and drives, so the manuscript isn't automatically out of scope, but it needs framing that foregrounds the power-equipment application.
+Since all figures use relative widths (`\linewidth`, `\columnwidth`, `\textwidth` fractions), they now automatically comply:
 
-## 2. Title-style issues
+- `figure*` diagrams (Figs. 0, 8) → 174.0 mm wide, 35–74 mm high ✓
+- Single-column figures (Figs. 6, 7) → 84.0 mm wide, 32–55 mm high ✓
+- Multi-panel figures (Figs. 1–5) → sub-panels 38–78 mm ✓
+- **No figure exceeds the 234 mm height limit** (tallest is ~78 mm)
 
-- **No application-leading structure.** JPE titles conventionally lead with the system (converter/drive/inverter…). Yours leads with three stacked method acronyms.
-- **"Multi-Representation Fusion" is vague.** "Multi-modal" (Mel + GADF) is clearer and a more standard keyword.
-- **Two acronyms in the title (PCNN, PINN-adjacent "Physics-Informed").** PCNN is little known in the power-electronics community; acronyms hurt discoverability and are discouraged by many journals.
-- **"Acoustic" is missing** — the single most distinctive aspect of the study.
+## Extra fix
 
-## 3. Recommended revisions (ranked)
+`Mel_Wave/normal.png` was lowercase on disk while the source references `Normal.png` — worked by luck on this filesystem, but breaks on case-sensitive systems. Renamed to `Normal.png`.
 
-1. **Application-led (best for JPE scope):**
-   > *Acoustic-Based Fault Diagnosis of Power Transformers Using Multi-Modal Representation Fusion Enhanced by a Pulse-Coupled Neural Network and Physics-Informed Learning*
-2. **Compromise (shorter, keeps acronym):**
-   > *PCNN-Enhanced Multi-Modal Acoustic Fault Diagnosis of Power Transformers with Physics-Informed Representation Learning*
-3. **Diagnosis-forward (if editor confirms scope):**
-   > *Acoustic Condition Monitoring and Fault Diagnosis of Power Transformers via Multi-Modal Fusion and Physics-Informed Representation Learning*
+## Verification
 
-Option 1 or 3 is preferable: it lets the editor immediately see the application, the sensing modality, and the method contributions in order of importance.
-
-## 4. Strategic caveat
-
-Honestly evaluate venue fit before retitling:
-
-- **If the core claim is "better diagnosis method"** → stronger fits are *IEEE Trans. Power Delivery*, *IEEE Trans. Instrumentation & Measurement*, *IEEE Sensors Journal*, *Measurement*, *Applied Acoustics*, or *Electric Power Systems Research*.
-- **If you stay with JPE** → consider (a) a **pre-submission inquiry to the EiC** stating the paper's relevance to power-equipment reliability, and (b) reframing the motivation toward converter/transformer-connected power-electronic systems (e.g., diagnostics relevant to substation power-electronics interfaces), which the current Introduction does not do.
-
-## Verdict
-
-| Aspect | Rating |
-|---|---|
-| Descriptive accuracy | ✅ Good |
-| Title style/conventions | ⚠️ Method-stacked, missing "acoustic" |
-| JPE scope alignment | ❌ Weak — needs application-led reframing |
-| Recommended action | Retitle (Option 1 or 3) + pre-submission scope inquiry |
-
-Want me to draft the pre-submission inquiry to the editor, or write the revised title variants into `manuscript.tex`?
+Both manuscripts compile with **0 errors**, 17 pages (down from 19 with the taller text area), and only invisible 0.6 pt paragraph overfulls remain.
 
 
-- This manuscript will be submitted to Journal of Power Electronics, revise the cover letter.
 
 
-This manuscript will be submitted to Journal of Power Electronics, create a new folder named `JPE_submission` in directory `PINN` and copy all relative files into it, the requirememnts are as follows:
-- All files must be on the same folder level; do not use sub folders
+
+
+
+
+
+
+
+
+
+- Page limit
+Manuscripts submitted as Original Articles should be between six (6) and ten (10) pages, including references.
+
+Manuscripts submitted as Review Articles should not exceed fifteen (15) pages, including references.
+
+>remove some redundant content if unnecessary to meet the page limit.
