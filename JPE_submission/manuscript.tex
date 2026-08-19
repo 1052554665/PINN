@@ -83,7 +83,7 @@ The overall framework is illustrated in Fig.~\ref{fig0}.
 
 \begin{figure*}[t]
 	\centering
-	\includegraphics[width=1.0\linewidth]{drawing/pinn-alexnet/pinn-alexnet}
+	\includegraphics[width=1.0\linewidth]{pinn-alexnet}
 	\caption{Overall framework of the proposed transformer fault diagnosis method. The pipeline consists of four stages: (1) multi-modal time--frequency representation via Mel spectrogram and GADF, (2) three-channel feature fusion with gamma correction, (3) PCNN-based feature enhancement, and (4) physics-informed AlexNet-SE classification with Laplacian regularization.}
 	\label{fig0}
 \end{figure*}
@@ -117,13 +117,13 @@ For each 1 second segment of the transformer acoustic signal, the short-time Fou
 	\centering
 	\begin{subfigure}[b]{0.45\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{Mel_Wave/Normal.png}
+		\includegraphics[width=\textwidth]{Normal.png}
 		\caption*{(a)} 
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.45\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{Mel_Wave/Mel_spectrogram.png}
+		\includegraphics[width=\textwidth]{Mel_spectrogram.png}
 		\caption*{(b)}
 	\end{subfigure}
 	\caption{Transformer acoustic signal under normal operating conditions. (a) Time-domain waveform. (b) Corresponding Mel spectrogram.}
@@ -172,7 +172,6 @@ The GASF encodes the summation of angular differences, capturing co-directional 
 
 \begin{figure}[t]
 	\centering
-	\graphicspath{{GAF/}}
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{GASF}}\hfill
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{GADF}}
 	\caption{GAF representations of a transformer acoustic signal: (a) GASF, (b) GADF. The GADF representation exhibits stronger contrast in the off-diagonal texture patterns, which capture transient fault signatures more distinctly.}
@@ -230,7 +229,6 @@ Fig.~\ref{fig3} compares the fused Mel-GADF image before and after gamma correct
 
 \begin{figure}[t]
 	\centering
-	\graphicspath{{Mel-GAF-Noise/}}
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{1}}\hfill
 	\subfloat[]{\includegraphics[width=0.45\textwidth]{2}}
 	\caption{Comparison of the fused Mel-GADF image (a) before and (b) after gamma correction with $\gamma = 1.7$. The corrected image exhibits enhanced contrast in low-energy regions while preserving high-energy structural details.}
@@ -243,12 +241,11 @@ Fig.~\ref{fig4} presents the three-channel fused representations for five transf
 
 \begin{figure*}[htbp]
 	\centering
-	\graphicspath{{MEL-GASF/}{MEL-GADF/}{MEL/}}
 	\begin{tabular}{c@{\hspace{0.3cm}}ccccc}
 		\begin{tikzpicture}
 			\node[align=right] {\rotatebox{90}{\textbf{Mel-GASF}}};
 		\end{tikzpicture}
-		\includegraphics[width=0.15\textwidth]{Normal_part0} &
+		\includegraphics[width=0.15\textwidth]{MEL-GASF_Normal_part0} &
 		\includegraphics[width=0.15\textwidth]{G4_10pSeventhHarmonic_1} &
 		\includegraphics[width=0.15\textwidth]{DCBias2_1} &
 		\includegraphics[width=0.15\textwidth]{Loosen1_1} &
@@ -327,8 +324,7 @@ The key insight for applying PCNNs to spectrogram enhancement is that the synchr
 
 \begin{figure}[t]
 	\centering
-	\graphicspath{{VT/}}
-	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part0}}\hfill
+	\subfloat[]{\includegraphics[width=0.22\textwidth]{VT_Normal_part0}}\hfill
 	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part04}}\hfill
 	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part06}}\hfill
 	\subfloat[]{\includegraphics[width=0.22\textwidth]{Normal_part08}}
@@ -427,7 +423,7 @@ To comprehensively evaluate the generalizability of the physics-informed framewo
 
 \begin{figure}
 	\centering
-	\includegraphics[width=1.0\linewidth]{drawing/PINN/pinn1}
+	\includegraphics[width=1.0\linewidth]{pinn1}
 	\caption{Architecture of the proposed physics-informed representation learning framework. The physical field $\bm{\Phi}$ is generated from the final feature maps via a $1 \times 1$ convolution, and the Laplacian regularization $\mathcal{L}_{\text{phys}}$ encourages spatial smoothness. The pooled physical features are fed back to the classifier, enabling physics-aware decision-making.}
 	\label{fig6}
 \end{figure}
@@ -546,7 +542,7 @@ After session-aware partitioning, the dataset was split into training (70\%), va
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=1.0\linewidth]{equipment/equipment}
+	\includegraphics[width=1.0\linewidth]{equipment}
 	\caption{Experimental platform for transformer acoustic signal acquisition at the substation.}
 	\label{fig7}
 \end{figure}
@@ -555,7 +551,7 @@ The overall feature extraction and classification pipeline is illustrated in Fig
 
 \begin{figure*}[t]
 	\centering
-	\includegraphics[width=1.0\linewidth]{drawing/overall/overall}
+	\includegraphics[width=1.0\linewidth]{overall}
 	\caption{End-to-end pipeline of the proposed transformer fault diagnosis framework: raw acoustic signal $\rightarrow$ Mel spectrogram + GADF $\rightarrow$ three-channel fusion with gamma correction $\rightarrow$ PCNN enhancement $\rightarrow$ physics-informed AlexNet-SE classification.}
 	\label{fig8}
 \end{figure*}
@@ -622,7 +618,6 @@ Table~\ref{tab5} reports the performance of four backbones integrated with the p
 
 \begin{figure}[t]
 	\centering
-	\graphicspath{{confusion/}}
 	\subfloat[]{\includegraphics[width=0.50\columnwidth]{confusion_matrix1}}\hfill
 	\subfloat[]{\includegraphics[width=0.50\columnwidth]{confusion_matrix2}}\hfill
 	\subfloat[]{\includegraphics[width=0.50\columnwidth]{confusion_matrix3}}\hfill
@@ -692,7 +687,7 @@ Key findings: (i) The end-to-end 1D-CNN ($87.14\%$) underperforms spectrogram-ba
 
 % \begin{figure*}
 % 	\centering
-% 	\includegraphics[width=1.0\linewidth]{drawing/fault-diagnosis/structure}
+%   \includegraphics[width=1.0\linewidth]{structure}
 % 	\caption{Structure of the fault diagnosis module.}
 % 	\label{fig10}
 % \end{figure*}
@@ -721,6 +716,9 @@ This paper presented a multi-modal acoustic fault diagnosis framework for power 
 \section{Acknowledgements}
 
 This work is supported by the National Natural Science Foundation of China (No.~12404545), the Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).
+
+\section{Conflict of Interest}
+On behalf of all authors, the corresponding author states that there is no conflict of interest.
 
 \bibliography{references}
 

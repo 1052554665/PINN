@@ -6,7 +6,7 @@
 \usepackage{ragged2e}  
 
 \geometry{left=25mm,right=25mm,top=25mm,bottom=25mm}
-\setstretch{1.15}
+\setstretch{1.05}
 
 
 \signature{\textbf{Zonglong Bai} \\
@@ -24,36 +24,23 @@
 \begin{document}
 	
 \begin{letter}{
-	% Prof. Paolo Carbone \\
 		Editor-in-Chief \\
-		Journal of Failure Analysis and Prevention}
+		Journal of Power Electronics}
 
 	
 		\opening{Dear Editor,}
-		
-		On behalf of my co-authors, I am pleased to submit our manuscript entitled  
-		\textit{``Acoustic-Based Failure Analysis of Power Transformers Using Multi-Modal Feature Fusion and Physics-Informed Representation Learning''}  
-		for consideration for publication in 
-		\textit{Journal of Failure Analysis and Prevention}.
-		
-		
-		Transformer faults diagnosis has traditionally relied on vibration-based methods, whereas studies utilizing acoustic fingerprint-based approaches remain relatively limited. The main challenges in acoustic fingerprint diagnosis are insufficient feature extraction and low recognition accuracy. In this work, we propose a novel multi-feature fusion method for transformer acoustic signals to enhance feature representation and develop a Physics-Informed Neural Network–based model to improve fault recognition performance. Experimental results demonstrate that the proposed approach achieves a recognition accuracy of 98.48\%, indicating strong potential for practical applications in transformer operation and maintenance.
-
-		Compared with existing data-driven methods, our contributions are threefold:  
-		\begin{enumerate}
-		\item We propose a fusion strategy combining the Mel spectrogram and Gramian Angular Difference Field of transformer voiceprint signals. Gamma correction is applied to enhance the Mel features of the fused image, and a Pulse Coupled Neural Network is employed to improve feature discriminability while suppressing noise interference.
-		
-		\item We design an improved AlexNet-SE architecture within the PINNs framework to achieve accurate fault diagnosis. Specifically, batch normalization and Squeeze-and-Excitation channel attention modules are integrated after each convolutional layer to refine structural representation and enhance channel feature extraction.
-
-		\item Extensive experiments validate the effectiveness of the proposed method, achieving high recognition accuracy and demonstrating robustness compared with conventional approaches.
-	\end{enumerate}
-
-		We confirm that this manuscript is original, has not been published previously, and is not under consideration elsewhere. All authors have approved the manuscript and agree with its submission. There are no conflicts of interest to declare.
-		
-		
-		\textbf{We sincerely appreciate your consideration of our manuscript and look forward to your response.}
-		
-		\closing{Sincerely,}
+	
+	On behalf of all co-authors, I am pleased to submit our manuscript entitled \textit{``Acoustic Condition Monitoring and Fault Diagnosis of Power Transformers via Multi-Modal Fusion and Physics-Informed Representation Learning''} for consideration for publication in the \textit{Journal of Power Electronics}.
+	
+	Acoustic-based transformer diagnosis faces three challenges: insufficient feature extraction, background noise, and limited labeled data. We address them through (i) three-channel Mel--GADF fusion with gamma correction and a pulse-coupled neural network (PCNN) front-end for noise suppression; (ii) an improved AlexNet-SE backbone regularized by a physics-informed Laplacian term derived from the acoustic Helmholtz equation; and (iii) rigorous validation, including component-wise ablation, session-aware five-fold cross-validation, and comparisons with several state-of-the-art models. On a real-world 220~kV transformer dataset, the method achieves a recognition accuracy of 98.48\%.
+	
+	The manuscript falls within the journal's scope of power quality and utility applications, analysis, modeling and control, and other applications, extending recent JPE work on signal-processing-based diagnostics of power equipment.
+	
+	We confirm that this manuscript is original, has not been published previously, and is not under consideration elsewhere. All authors have approved the submission, and there are no conflicts of interest to declare.
+	
+	We appreciate your consideration and look forward to your response.
+	
+	\closing{Sincerely,}
 		
 	\end{letter}
 \end{document}
