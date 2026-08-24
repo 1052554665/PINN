@@ -37,18 +37,6 @@
 
 \begin{document}
 
-% ======================================================================
-% Frontmatter
-% ======================================================================
-
-% \title[Acoustic-Based Failure Analysis]{Acoustic-Based Failure Analysis of Power Transformers Using Multi-Modal Feature Fusion and Physics-Informed Representation Learning}
-
-% \title[PCNN-Enhanced Multi-Modal Acoustic Fault Diagnosis]{PCNN-Enhanced Multi-Representation Fusion with Physics-Informed Learning for Power Transformer Fault Diagnosis}
-
-
-% \title{Acoustic-Based Fault Diagnosis of Power Transformers Using Multi-Modal Representation Fusion Enhanced by a Pulse-Coupled Neural Network and Physics-Informed Learning}
-
-
 \title{Acoustic Condition Monitoring and Fault Diagnosis of Power Transformers via Multi-Modal Fusion and Physics-Informed Representation Learning}
 
 %% Authors -------------------------------------------------------------
@@ -135,7 +123,7 @@ For each 1 second segment of the transformer acoustic signal, the short-time Fou
 
 \noindent where $H_m(k)$ represents the response of the $m$-th filter at frequency bin $k$, and $f(m-1)$, $f(m)$, and $f(m+1)$ denote the lower corner, center, and upper corner frequencies, respectively. The resulting Mel spectrogram for a transformer under normal operating conditions is illustrated in Fig.~\ref{fig1}.
 
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
 	\centering
 	\begin{subfigure}[b]{0.45\textwidth}
 		\centering
@@ -150,7 +138,7 @@ For each 1 second segment of the transformer acoustic signal, the short-time Fou
 	\end{subfigure}
 	\caption{Transformer acoustic signal under normal operating conditions. (a) Time-domain waveform. (b) Corresponding Mel spectrogram.}
 	\label{fig1}
-\end{figure*}
+\end{figure}
 
 \subsection{Gramian Angular Field}
 The Gramian Angular Field (GAF) is a method for encoding one-dimensional time series into two-dimensional image representations that preserve the temporal correlation structure \cite{10114345}. By representing time-series values in polar coordinates and computing pairwise trigonometric interactions, GAF produces images where each element $(i,j)$ encodes the temporal relationship between time steps $i$ and $j$. Two variants exist, i.e., the Gramian Angular Summation Field (GASF) based on $\cos(\phi_i + \phi_j)$, and the Gramian Angular Difference Field (GADF) based on $\sin(\phi_i - \phi_j)$ \cite{10281942}. The encoding procedure involves three steps:
@@ -192,14 +180,14 @@ The Gramian Angular Field (GAF) is a method for encoding one-dimensional time se
 
 The GASF encodes the summation of angular differences, capturing co-directional relationships, while the GADF encodes the difference of angular values, capturing orthogonality relationships and offering greater sensitivity to local phase variations \cite{8975572}. In this study, both GASF and GADF representations are computed, and their relative efficacy is compared experimentally (see Section~5.2). Fig.~\ref{fig2} shows the GASF and GADF representations of a transformer acoustic signal under normal conditions.
 
-\begin{figure*}[t]
+\begin{figure}
 	\centering
 	\graphicspath{{GAF/}}
-	\subfloat[]{\includegraphics[width=0.45\textwidth]{GASF}}\hfill
-	\subfloat[]{\includegraphics[width=0.45\textwidth]{GADF}}
+	\subfloat[]{\includegraphics[width=0.20\textwidth]{GASF}}\hfill
+	\subfloat[]{\includegraphics[width=0.20\textwidth]{GADF}}
 	\caption{GAF representations of a transformer acoustic signal: (a) GASF, (b) GADF. The GADF representation exhibits stronger contrast in the off-diagonal texture patterns, which capture transient fault signatures more distinctly.}
 	\label{fig2}
-\end{figure*}
+\end{figure}
 
 
 \section{Multi-Modal Feature Extraction and Fusion}
@@ -234,11 +222,11 @@ Image resizing is required to ensure dimensional consistency between the Mel spe
 \begin{equation}
 	P(x, y) = \sum_{i=-1}^{2} \sum_{j=-1}^{2} w(i, j) \cdot \bm{I}(x + i, y + j)
 \end{equation}
-\noindent where the weight function $w(i, j)$ is constructed from the product of two one-dimensional cubic kernels:
+\noindent where the weight function $w(i, j)$ is constructed from the product of two one-dimensional cubic kernels,
 \begin{equation}
 	w(i, j) = \mathcal{K}(d_x - i) \cdot \mathcal{K}(d_y - j)
 \end{equation}
-with $d_x = x - \lfloor x \rfloor$, $d_y = y - \lfloor y \rfloor$ being the fractional offsets, and the cubic kernel $\mathcal{K}(t)$ defined as:
+with $d_x = x - \lfloor x \rfloor$, $d_y = y - \lfloor y \rfloor$ being the fractional offsets, and the cubic kernel $\mathcal{K}(t)$ defined as,
 \begin{equation}
 	\mathcal{K}(t) = \begin{cases}
 		(a + 2)|t|^3 - (a + 3)|t|^2 + 1, & |t| \leq 1 \\
@@ -250,14 +238,14 @@ with $d_x = x - \lfloor x \rfloor$, $d_y = y - \lfloor y \rfloor$ being the frac
 
 Fig.~\ref{fig3} compares the fused Mel-GADF image before and after gamma correction. In the uncorrected image (Fig.~\ref{fig3}(a)), low-frequency regions appear dark and texturally indistinct due to the large dynamic range of spectral amplitudes. After applying gamma correction with $\gamma = 1.7$ (Fig.~\ref{fig3}(b)), the contrast in these regions is significantly enhanced, revealing detailed structural patterns that facilitate the network's ability to learn subtle fault-related features.
 
-\begin{figure*}[t]
+\begin{figure}
 	\centering
 	\graphicspath{{Mel-GAF-Noise/}}
-	\subfloat[]{\includegraphics[width=0.45\textwidth]{1}}\hfill
-	\subfloat[]{\includegraphics[width=0.45\textwidth]{2}}
+	\subfloat[]{\includegraphics[width=0.20\textwidth]{1}}\hfill
+	\subfloat[]{\includegraphics[width=0.20\textwidth]{2}}
 	\caption{Comparison of the fused Mel-GADF image (a) before and (b) after gamma correction with $\gamma = 1.7$. The corrected image exhibits enhanced contrast in low-energy regions while preserving high-energy structural details.}
 	\label{fig3}
-\end{figure*}
+\end{figure}
 
 
 \subsection{Multi-Condition Fused Representations}
@@ -600,9 +588,8 @@ To comprehensively assess classification performance, the following metrics are 
 \end{itemize}
 All metrics are reported as mean $\pm$ standard deviation over five-fold stratified cross-validation unless otherwise noted.
 
-\subsection{Experiment 1: GASF vs.\ GADF Feature Comparison}
-
-We first compare the two GAF variants, i.e., GASF and GADF, as input representations under identical conditions (AlexNet-SE backbone, with and without PCNN enhancement). The results are presented in Table~\ref{tab4}. Mel-GADF features consistently outperform their Mel-GASF counterparts across all metrics. Without PCNN, Mel-GADF achieves an accuracy of 93.94\% versus 92.42\% for Mel-GASF, with a notably higher $G_{\text{mean}}$ (0.9587 vs.\ 0.8503), indicating more balanced per-class performance. The $F_1$ standard deviation for Mel-GADF is substantially lower ($\sigma_{F_1} = 0.0434$ vs.\ 0.1490), confirming greater classification stability across fault types. With PCNN enhancement, both feature types improve considerably, reaching 96.97\% accuracy. The superiority of GADF over GASF is attributed to its difference-based encoding ($\sin(\phi_i - \phi_j)$), which captures phase deviations more sensitively than the summation-based GASF ($\cos(\phi_i + \phi_j)$), making it better suited for detecting transient fault signatures. All subsequent experiments therefore employ the Mel-GADF-PCNN configuration.
+\subsection{Experiment 1: GASF and GADF Feature Comparison}
+We first compare the two GAF variants, i.e., GASF and GADF, as input representations under identical conditions (AlexNet-SE backbone, with and without PCNN enhancement). The results are presented in Table~\ref{tab4}. Mel-GADF features consistently outperform their Mel-GASF counterparts across all metrics. Without PCNN, Mel-GADF achieves an accuracy of 93.94\% versus 92.42\% for Mel-GASF, with a notably higher $G_{\text{mean}}$, indicating more balanced per-class performance. The $F_1$ standard deviation for Mel-GADF is substantially lower, confirming greater classification stability across fault types. With PCNN enhancement, both feature types improve considerably, reaching 96.97\% accuracy. The superiority of GADF over GASF is attributed to its difference-based encoding ($\sin(\phi_i - \phi_j)$), which captures phase deviations more sensitively than the summation-based GASF ($\cos(\phi_i + \phi_j)$), making it better suited for detecting transient fault signatures. All subsequent experiments therefore employ the Mel-GADF-PCNN configuration.
 \begin{table*}[ht]
 	\centering
 	\caption{Feature Comparison: GASF vs.\ GADF with and without PCNN (AlexNet-SE Backbone)}
@@ -623,7 +610,7 @@ We first compare the two GAF variants, i.e., GASF and GADF, as input representat
 \end{table*}
 
 \subsection{Experiment 2: Backbone Architecture Comparison with PINN}
-Table~\ref{tab5} reports the performance of four backbones integrated with the physics-informed framework on Mel-GADF-PCNN input. AlexNet-SE achieves the highest performance (98.48\% accuracy, $F_1^w = 0.9849$, $G_{\text{mean}} = 0.9907$) with the lowest inter-class variance ($\sigma_{F_1} = 0.0133$). ResNet-18 and ConvNeXt-T show competitive but lower performance (both 95.45\%), while LeNet underperforms significantly (72.24\%). The confusion matrices in Fig.~\ref{fig11} confirm that AlexNet-SE correctly classifies nearly all test samples, with only a single misclassification in the N0 category.
+Table~\ref{tab5} reports the performance of four backbones integrated with the physics-informed framework on Mel-GADF-PCNN input. AlexNet-SE achieves the highest performance, with 98.48\% accuracy and the best overall metrics, and the lowest inter-class variance. ResNet-18 and ConvNeXt-T show competitive but lower performance (both 95.45\%), while LeNet underperforms significantly (72.24\%). The confusion matrices in Fig.~\ref{fig11} confirm that AlexNet-SE correctly classifies nearly all test samples, with only a single misclassification in the N0 category.
 
 \begin{table*}[ht]
 	\centering
@@ -712,19 +699,6 @@ To quantify the individual contribution of each proposed component, a systematic
 We benchmark against seven representative methods (Table~\ref{tab7}) under identical five-fold cross-validation with session-aware splits.
 
 Key findings: (i) The end-to-end 1D-CNN ($87.14\%$) underperforms spectrogram-based methods, confirming that time-frequency representations provide valuable inductive bias for acoustic diagnosis. (ii) Among modern architectures, Swin-T achieves the best competitor performance ($95.82\%$). (iii) The proposed method outperforms Swin-T by $+1.44\%$ in accuracy ($p = 0.003$, paired $t$-test), demonstrating that PCNN + PINN provides benefits beyond architectural innovation alone.
-
-% \begin{figure*}
-% 	\centering
-% 	\includegraphics[width=1.0\linewidth]{drawing/fault-diagnosis/structure}
-% 	\caption{Structure of the fault diagnosis module.}
-% 	\label{fig10}
-% \end{figure*}
-
-% \subsection{Experiment 5: Hyperparameter Sensitivity Analysis}
-% A systematic sensitivity analysis evaluated five key hyperparameters: gamma correction $\gamma$, PINN weight $\lambda_{\text{phy}}$, PCNN threshold $V_T$, PCNN iterations $N$, and learning rate. The macro $F_1$-score was evaluated across a grid of values using three-fold cross-validation. Key findings: $\gamma = 1.7$ provides optimal low-energy enhancement without over-saturation; $\lambda_{\text{phy}} = 0.1$ achieves the best data--physics balance (setting $\lambda_{\text{phy}} = 0$ yields $F_1 = 0.9608$, confirming the non-trivial benefit of the physical constraint); $V_T = 0.8$ balances noise suppression and feature preservation; $N = 10$ saturates performance with minimal computational overhead.
-
-% \subsection{Experiment 6: Noise Robustness Evaluation}
-% Models trained on clean data were evaluated under additive white Gaussian noise at SNR levels from $-5$~dB to $30$~dB. Four variants were compared: Baseline AlexNet-SE, +PINN (no PCNN), +PCNN (no PINN), and the Full model. At SNR $\geq 15$~dB, all variants maintain accuracy above $90\%$. At low SNR ($0$ to $5$~dB), PCNN-equipped variants outperform non-PCNN counterparts by $+5\%$ to $+8\%$. At SNR $= -5$~dB, the full model retains $78.3\%$ accuracy vs.\ $62.1\%$ for the baseline, a $+16.2\%$ improvement that highlights the synergistic benefit of combining biologically inspired denoising with physics-informed regularization.
 
 \subsection{Discussion}
 The comprehensive experimental evaluation yields several important conclusions:

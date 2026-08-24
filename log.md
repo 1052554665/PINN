@@ -37,20 +37,11 @@ Since all figures use relative widths (`\linewidth`, `\columnwidth`, `\textwidth
 Both manuscripts compile with **0 errors**, 17 pages (down from 19 with the taller text area), and only invisible 0.6 pt paragraph overfulls remain.
 
 
-
-
-
-
-
-
-
-
-
-
-
 - Page limit
 Manuscripts submitted as Original Articles should be between six (6) and ten (10) pages, including references.
 
 Manuscripts submitted as Review Articles should not exceed fifteen (15) pages, including references.
 
 >remove some redundant content if unnecessary to meet the page limit.
+
+>replace `JPE_submission/manuscript.tex` with `paper/manuscript.tex`, also the bibliography file `JPE_submission/references.bib` with `paper/references.bib`. All relative files are located in the `JPE_submission` directory.
